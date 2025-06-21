@@ -1,0 +1,48 @@
+{
+    "posts": [
+        {
+            "id": "1",
+            "title": "Breaking: Major Tech Conference Announces AI Breakthroughs",
+            "summary": "Industry leaders showcase revolutionary AI technologies that could transform software development.",
+            "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "author": "Jane Smith",
+            "source": "TechNews Daily",
+            "publishedAt": "2024-01-15T10:30:00Z",
+            "url": "https://example.com/tech-conference-ai-breakthroughs",
+            "imageUrl": "https://example.com/images/ai-conference.jpg",
+            "category": "Technology",
+            "tags": ["AI", "Conference", "Innovation"]
+        },
+        {
+            "id": "2",
+            "title": "Stock Market Reaches Record High Amid Economic Recovery",
+            "summary": "Markets surge as investors show confidence in post-pandemic economic growth.",
+            "content": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+            "author": "John Doe",
+            "source": "Financial Times",
+            "publishedAt": "2024-01-15T08:15:00Z",
+            "url": "https://example.com/stock-market-record-high",
+            "imageUrl": "https://example.com/images/stock-market.jpg",
+            "category": "Finance",
+            "tags": ["Stock Market", "Economy", "Investment"]
+        },
+        {
+            "id": "3",
+            "title": "New Climate Initiative Launches Globally",
+            "summary": "International coalition announces ambitious plan to reduce carbon emissions by 50% within the next decade.",
+            "content": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+            "author": "Sarah Johnson",
+            "source": "Environmental Herald",
+            "publishedAt": "2024-01-14T16:45:00Z",
+            "url": "https://example.com/climate-initiative-global",
+            "imageUrl": "https://example.com/images/climate-action.jpg",
+            "category": "Environment",
+            "tags": ["Climate", "Environment", "Sustainability"]
+        }
+    ],
+    "metadata": {
+        "totalPosts": 3,
+        "lastUpdated": "2024-01-15T12:00:00Z",
+        "version": "1.0"
+    }
+}
