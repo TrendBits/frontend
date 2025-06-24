@@ -1,6 +1,6 @@
-# News Scraper Frontend
+# Trendlog Frontend
 
-A modern React frontend for a news scraping and aggregation platform with AI/NLP features.
+A modern React frontend for tracking trends across various fields with AI-powered summaries and multi-source content aggregation.
 
 ## Tech Stack
 
@@ -14,8 +14,11 @@ A modern React frontend for a news scraping and aggregation platform with AI/NLP
 
 ## Features
 
-- 📰 **News Posts Display** - Browse and view news articles
-- 🔍 **Search & Filtering** - Search through posts with real-time filtering
+- � **Trend Tracking** - Monitor trends across various fields and topics of interest
+- 🤖 **AI-Powered Summaries** - Generate intelligent text summaries of trending content
+- 🎧 **Text-to-Audio** - Convert summaries and articles to audio format
+- 📰 **Multi-Source Content** - Aggregate content from Reddit, news sites, and other platforms
+- 🔍 **Search & Filtering** - Search through trends with real-time filtering
 - 📱 **Responsive Design** - Modern UI with Tailwind CSS
 - 🛡️ **Type Safety** - Full TypeScript coverage with runtime validation
 - ⚡ **Performance** - Optimized with Vite and modern React patterns
@@ -28,9 +31,9 @@ src/
 ├── routes/           # File-based routing
 │   ├── __root.tsx   # Root layout
 │   ├── index.tsx    # Home page
-│   └── posts/       # Posts section
-│       ├── index.tsx     # Posts listing
-│       └── $postId.tsx   # Individual post page
+│   └── posts/       # Trends and content section
+│       ├── index.tsx     # Trends listing
+│       └── $postId.tsx   # Individual trend/content page
 ├── schemas/         # Zod validation schemas
 │   └── posts.schema.ts
 ├── store/           # Zustand state management
@@ -63,9 +66,12 @@ src/
 
 The frontend is designed to work with a backend API but currently uses mock data (`public/posts.json`) for development. The data structure includes:
 
-- **Posts** with title, summary, content, author, source, and metadata
-- **Search functionality** with query parameters
-- **Pagination** support
+- **Trending Content** with title, summary, AI-generated insights, author, source, and metadata
+- **Multi-source data** from Reddit, news sites, and other platforms
+- **AI-generated summaries** and trend analysis
+- **Audio conversion** capabilities for text-to-speech
+- **Search functionality** with query parameters across multiple fields
+- **Pagination** support for large datasets
 - **Type-safe validation** with Zod schemas
 
 ## Development Notes
