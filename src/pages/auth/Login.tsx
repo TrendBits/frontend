@@ -41,9 +41,9 @@ const Login = () => {
         }}
       >
         {/* Logo */}
-        <div className="flex flex-col items-center mb-3">
-          <img src={Logo} alt="TrendBits Logo" className="w-10 h-10" />
-          <h2 className="font-fredoka font-medium text-2xl">TrendBits</h2>
+        <div className="flex flex-col items-center mb-5">
+          <img src={Logo} alt="TrendBits Logo" className="w-16 h-16" />
+          <h2 className="font-fredoka font-medium text-3xl">TrendBits</h2>
         </div>
 
         {/* Form Fields */}
