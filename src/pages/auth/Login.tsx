@@ -104,7 +104,7 @@ const Login = () => {
 
         {/* Forgot Password */}
         <div className="flex justify-end w-full">
-          <Link to="/auth/resetPassword" className="text-primary hover:underline hover:text-primaryDark font-medium text-sm">
+          <Link to="/auth/requestPasswordReset" className="text-primary hover:underline hover:text-primaryDark font-medium text-sm">
             Forgot Password?
           </Link>
         </div>
