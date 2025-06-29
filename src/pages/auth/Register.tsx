@@ -130,7 +130,10 @@ const Register = () => {
                 {/* Password Requirements */}
                 <div className="mt-3 space-y-1 flex flex-wrap gap-1.5">
                   {requirementsList.map((requirement) => (
-                    <div key={requirement.key} className={`flex items-center gap-1 h-full px-1.5 py-1 rounded ${requirement.met ? 'bg-green-100' : 'bg-gray-100'}`}>
+                    <div
+                      key={requirement.key}
+                      className={`flex items-center gap-1 h-full px-1.5 py-1 rounded ${requirement.met ? "bg-green-100" : "bg-gray-100"}`}
+                    >
                       {requirement.met ? (
                         <Check size={14} className="text-green-600" />
                       ) : (
