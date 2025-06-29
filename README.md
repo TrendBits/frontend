@@ -5,6 +5,7 @@ A modern React frontend for an AI-powered trend summarization tool that analyzes
 ## Features
 
 - 🤖 **AI Trend Summarization** - Intelligent AI-powered summaries of trending topics and patterns
+- 🔐 **Authentication System** - Complete user authentication with registration, login, and password recovery
 - 🔗 **Article References** - Direct links to relevant online articles and sources
 - 🎧 **Text-to-Audio** - Convert summaries and articles to audio format
 - 📊 **Multi-Source Analysis** - Analyze trends from Reddit, news sites, and other platforms
@@ -20,13 +21,15 @@ A modern React frontend for an AI-powered trend summarization tool that analyzes
 - **Routing:** TanStack Router with file-based routing
 - **State Management:** Zustand
 - **Data Fetching:** TanStack Query
+- **Forms & Validation:** TanStack Form + Zod schemas
 - **Styling:** Tailwind CSS 4
+- **Icons:** Lucide React
 - **Type Safety:** TypeScript + Zod validation
 - **Linting:** ESLint 9 with TypeScript support
 
 ## Features
 
-- � **Trend Tracking** - Monitor trends across various fields and topics of interest
+- 🔐 **User Authentication** - Secure registration and login system with password recovery
 - 🤖 **AI-Powered Summaries** - Generate intelligent text summaries of trending content
 - 🎧 **Text-to-Audio** - Convert summaries and articles to audio format
 - 📰 **Multi-Source Content** - Aggregate content from Reddit, news sites, and other platforms
@@ -43,9 +46,24 @@ src/
 ├── routes/           # File-based routing
 │   ├── __root.tsx   # Root layout
 │   ├── index.tsx    # Home page
+│   ├── auth/        # Authentication routes
+│   │   ├── login.tsx         # User login page
+│   │   ├── register.tsx      # User registration page
+│   │   └── requestPasswordReset.tsx  # Password recovery
 │   └── posts/       # Trend summaries section
 │       ├── index.tsx     # Trend summaries listing
 │       └── $postId.tsx   # Individual trend summary page
+├── components/      # Reusable UI components
+│   ├── Layouts/     # Layout components
+│   │   └── RootLayout.tsx   # Main app layout
+│   └── ui/          # UI components
+│       ├── Button.tsx       # Styled button component
+│       └── Input.tsx        # Form input component
+├── pages/           # Page components
+│   └── auth/        # Authentication pages
+│       ├── Login.tsx        # Login form component
+│       ├── Register.tsx     # Registration form component
+│       └── RequestResetPassword.tsx  # Request password reset form
 ├── schemas/         # Zod validation schemas
 │   └── posts.schema.ts
 ├── store/           # Zustand state management
