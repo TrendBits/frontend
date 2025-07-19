@@ -2,11 +2,14 @@ import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 
 import { RootLayout } from "../../components/Layouts";
 import { Button, Input } from "../../components/ui";
 import Logo from "../../assets/logo.png";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { loginUser } from "../../api/auth.api";
+import { setToken } from "../../util/auth.util";
 
 // Zod schema for login form
 const loginSchema = z.object({
@@ -17,7 +20,18 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  const loginMutation = useMutation({
+    mutationFn: async (data: LoginFormData) => {
+      return await loginUser(data);
+    },
+    onSuccess: (response: any) => {
+      setToken(response?.data?.accessToken);
+      navigate({ to: "/posts", replace: true });
+    },
+  });
 
   const form = useForm({
     defaultValues: {
@@ -25,7 +39,7 @@ const Login = () => {
       password: "",
     } as LoginFormData,
     onSubmit: async ({ value }) => {
-      console.log(value);
+      loginMutation.mutate(value);
     },
   });
 
@@ -45,6 +59,13 @@ const Login = () => {
           <img src={Logo} alt="TrendBits Logo" className="w-16 h-16" />
           <h2 className="font-fredoka font-medium text-3xl">TrendBits</h2>
         </div>
+
+        {/* Api Error Field */}
+        {loginMutation.isError && (
+          <div className="w-full bg-red-100 text-red-800 p-3 rounded-lg mb-2">
+            <p className="text-sm">{loginMutation.error.message}</p>
+          </div>
+        )}
 
         {/* Form Fields */}
         <form.Field
@@ -89,13 +110,7 @@ const Login = () => {
               className="w-full"
               leftIcon={<Lock size={18} />}
               rightIcon={
-                <>
-                  {showPassword ? (
-                    <EyeOff onClick={() => setShowPassword(!showPassword)} size={18} />
-                  ) : (
-                    <Eye onClick={() => setShowPassword(!showPassword)} size={18} />
-                  )}
-                </>
+                <>{showPassword ? <EyeOff onClick={() => setShowPassword(!showPassword)} size={18} /> : <Eye onClick={() => setShowPassword(!showPassword)} size={18} />}</>
               }
               error={field.state.meta.isTouched && field.state.meta.errors.length > 0 ? field.state.meta.errors[0] : ""}
             />
@@ -110,8 +125,8 @@ const Login = () => {
         </div>
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full" disabled={!form.state.isValid || form.state.isSubmitting}>
-          {form.state.isSubmitting ? "Logging In..." : "Login your account"}
+        <Button type="submit" className="w-full" disabled={!form.state.isValid || loginMutation.isPending}>
+          {loginMutation.isPending ? "Logging In..." : "Login your account"}
         </Button>
 
         {/* Bottom text */}

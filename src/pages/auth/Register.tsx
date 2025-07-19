@@ -6,7 +6,10 @@ import { useState } from "react";
 import { RootLayout } from "../../components/Layouts";
 import { Button, Input } from "../../components/ui";
 import Logo from "../../assets/logo.png";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { registerUser } from "../../api/auth.api";
+import { toast } from "sonner";
 
 // Zod schema for registration form
 const registerSchema = z.object({
@@ -22,6 +25,7 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 const Register = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const checkPasswordRequirements = (password: string) => {
@@ -40,13 +44,23 @@ const Register = () => {
     { key: "hasSpecial", label: "At least 1 special character", met: requirements.hasSpecial },
   ];
 
+  const registerMutation = useMutation({
+    mutationFn: async (data: RegisterFormData) => {
+      return await registerUser(data);
+    },
+    onSuccess: () => {
+      toast.success("Account created successfully!");
+      navigate({ to: "/auth/login", replace: true });
+    },
+  });
+
   const form = useForm({
     defaultValues: {
       email: "",
       password: "",
     } as RegisterFormData,
     onSubmit: async ({ value }) => {
-      console.log(value);
+      registerMutation.mutate(value);
     },
   });
 
@@ -66,6 +80,13 @@ const Register = () => {
           <img src={Logo} alt="TrendBits Logo" className="w-16 h-16" />
           <h2 className="font-fredoka font-medium text-3xl">TrendBits</h2>
         </div>
+
+        {/* Api Error Field */}
+        {registerMutation.isError && (
+          <div className="w-full bg-red-100 text-red-800 p-3 rounded-lg mb-2">
+            <p className="text-sm">{registerMutation.error.message}</p>
+          </div>
+        )}
 
         {/* Email Field */}
         <form.Field
@@ -117,31 +138,16 @@ const Register = () => {
                   className="w-full"
                   leftIcon={<Lock size={18} />}
                   rightIcon={
-                    <>
-                      {showPassword ? (
-                        <EyeOff onClick={() => setShowPassword(!showPassword)} size={18} />
-                      ) : (
-                        <Eye onClick={() => setShowPassword(!showPassword)} size={18} />
-                      )}
-                    </>
+                    <>{showPassword ? <EyeOff onClick={() => setShowPassword(!showPassword)} size={18} /> : <Eye onClick={() => setShowPassword(!showPassword)} size={18} />}</>
                   }
                 />
 
                 {/* Password Requirements */}
                 <div className="mt-3 space-y-1 flex flex-wrap gap-1.5">
                   {requirementsList.map((requirement) => (
-                    <div
-                      key={requirement.key}
-                      className={`flex items-center gap-1 h-full px-1.5 py-1 rounded ${requirement.met ? "bg-green-100" : "bg-gray-100"}`}
-                    >
-                      {requirement.met ? (
-                        <Check size={14} className="text-green-600" />
-                      ) : (
-                        <X size={14} className="text-gray-500" />
-                      )}
-                      <span className={`text-xs font-medium ${requirement.met ? "text-green-600" : "text-gray-500"}`}>
-                        {requirement.label}
-                      </span>
+                    <div key={requirement.key} className={`flex items-center gap-1 h-full px-1.5 py-1 rounded ${requirement.met ? "bg-green-100" : "bg-gray-100"}`}>
+                      {requirement.met ? <Check size={14} className="text-green-600" /> : <X size={14} className="text-gray-500" />}
+                      <span className={`text-xs font-medium ${requirement.met ? "text-green-600" : "text-gray-500"}`}>{requirement.label}</span>
                     </div>
                   ))}
                 </div>
@@ -151,8 +157,8 @@ const Register = () => {
         />
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full" disabled={!form.state.isValid || form.state.isSubmitting}>
-          {form.state.isSubmitting ? "Creating Account..." : "Register an account"}
+        <Button type="submit" className="w-full" disabled={!form.state.isValid || registerMutation.isPending}>
+          {registerMutation.isPending ? "Creating Account..." : "Register an account"}
         </Button>
 
         {/* Bottom text */}
