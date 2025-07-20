@@ -10,6 +10,7 @@ import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
 import { loginUser } from "../../api/auth.api";
 import { setToken } from "../../util/auth.util";
 import { loginSchema, type LoginFormData } from "../../schemas/auth.schema";
+import { toast } from "sonner";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -23,8 +24,9 @@ const Login = () => {
       return await loginUser(data);
     },
     onSuccess: (response: any) => {
-      setToken(response?.data?.accessToken);
+      setToken(response.data.data.access_token);
       navigate({ to: redirect || "/dashboard", replace: true });
+      toast.success("Login successful!");
     },
   });
 

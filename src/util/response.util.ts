@@ -5,6 +5,14 @@ export interface ApiError {
   originalError?: any;
 }
 
+export interface ApiSucess<T = any> {
+  status: number;
+  title: string;
+  message: string;
+  data: T;
+  // rawResponse?: any;
+}
+
 export const handleApiError = (err: unknown): ApiError => {
   // Check for direct status property (backend error with status)
   if (err && typeof err === "object" && "status" in err) {
@@ -46,5 +54,27 @@ export const handleApiError = (err: unknown): ApiError => {
     title: "An Error Occurred",
     message: typeof message === "string" ? message : "An unexpected error occurred.",
     originalError: err,
+  };
+};
+
+export const handleApiResponse = (response: unknown): ApiSucess => {
+  if (response && typeof response === "object" && "data" in response && typeof (response as any).data === "object") {
+    const res = response as any;
+
+    return {
+      status: res.status ?? 200,
+      title: res.data.title ?? "Success",
+      message: res.data.message ?? "Request succeeded",
+      data: res.data.data ?? null,
+      // rawResponse: response,
+    };
+  }
+
+  return {
+    status: 200,
+    title: "Success",
+    message: "Request completed successfully",
+    data: null,
+    // rawResponse: response,
   };
 };

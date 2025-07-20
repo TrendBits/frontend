@@ -1,6 +1,6 @@
-import axios, { type InternalAxiosRequestConfig } from "axios";
-import { handleApiError } from "./error.util";
+import axios, { type AxiosResponse, type InternalAxiosRequestConfig } from "axios";
 import { clearToken, getToken } from "./auth.util";
+import { handleApiError, handleApiResponse } from "./response.util";
 
 export interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   addToken?: boolean;
@@ -28,7 +28,7 @@ api.interceptors.request.use((config: CustomAxiosRequestConfig) => {
 
 // Handle 401 errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => handleApiResponse(response) as unknown as AxiosResponse,
   (error) => {
     if (error.response?.status === 401) {
       clearToken();
