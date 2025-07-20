@@ -7,7 +7,7 @@ const isAuthenticated = async () => {
   if (!token) return false;
   try {
     return await validateToken();
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 };
