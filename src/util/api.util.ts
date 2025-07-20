@@ -1,6 +1,10 @@
-import axios from "axios";
+import axios, { type InternalAxiosRequestConfig } from "axios";
 import { handleApiError } from "./error.util";
 import { clearToken, getToken } from "./auth.util";
+
+export interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
+  addToken?: boolean;
+}
 
 // Create API instance
 const api = axios.create({
@@ -11,11 +15,14 @@ const api = axios.create({
 });
 
 // Add token to requests
-api.interceptors.request.use((config) => {
-  const token = getToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use((config: CustomAxiosRequestConfig) => {
+  if (config.addToken) {
+    const token = getToken();
+    if (token) {
+      config.headers.set("Authorization", `Bearer ${token}`);
+    }
   }
+
   return config;
 });
 

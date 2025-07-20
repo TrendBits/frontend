@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";
@@ -7,20 +6,16 @@ import { useMutation } from "@tanstack/react-query";
 import { RootLayout } from "../../components/Layouts";
 import { Button, Input } from "../../components/ui";
 import Logo from "../../assets/logo.png";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
 import { loginUser } from "../../api/auth.api";
 import { setToken } from "../../util/auth.util";
-
-// Zod schema for login form
-const loginSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+import { loginSchema, type LoginFormData } from "../../schemas/auth.schema";
 
 const Login = () => {
   const navigate = useNavigate();
+  const routeApi = getRouteApi("/auth/_auth/login");
+  const { redirect } = routeApi.useSearch();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const loginMutation = useMutation({
@@ -29,7 +24,7 @@ const Login = () => {
     },
     onSuccess: (response: any) => {
       setToken(response?.data?.accessToken);
-      navigate({ to: "/posts", replace: true });
+      navigate({ to: redirect || "/dashboard", replace: true });
     },
   });
 

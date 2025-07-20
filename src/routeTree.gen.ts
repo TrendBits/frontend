@@ -8,109 +8,130 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PostsIndexRouteImport } from './routes/posts/index'
-import { Route as PostsPostIdRouteImport } from './routes/posts/$postId'
 import { Route as AuthRequestPasswordResetRouteImport } from './routes/auth/requestPasswordReset'
-import { Route as AuthRegisterRouteImport } from './routes/auth/register'
-import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthAuthRouteImport } from './routes/auth/_auth'
+import { Route as ProtectedAuthRouteImport } from './routes/_protected/_auth'
+import { Route as AuthAuthRegisterRouteImport } from './routes/auth/_auth.register'
+import { Route as AuthAuthLoginRouteImport } from './routes/auth/_auth.login'
+import { Route as ProtectedAuthDashboardRouteImport } from './routes/_protected/_auth.dashboard'
 
+const AuthRouteImport = createFileRoute('/auth')()
+
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PostsIndexRoute = PostsIndexRouteImport.update({
-  id: '/posts/',
-  path: '/posts/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PostsPostIdRoute = PostsPostIdRouteImport.update({
-  id: '/posts/$postId',
-  path: '/posts/$postId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRequestPasswordResetRoute =
   AuthRequestPasswordResetRouteImport.update({
-    id: '/auth/requestPasswordReset',
-    path: '/auth/requestPasswordReset',
-    getParentRoute: () => rootRouteImport,
+    id: '/requestPasswordReset',
+    path: '/requestPasswordReset',
+    getParentRoute: () => AuthRoute,
   } as any)
-const AuthRegisterRoute = AuthRegisterRouteImport.update({
-  id: '/auth/register',
-  path: '/auth/register',
+const AuthAuthRoute = AuthAuthRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => AuthRoute,
+} as any)
+const ProtectedAuthRoute = ProtectedAuthRouteImport.update({
+  id: '/_protected/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/auth/login',
-  path: '/auth/login',
-  getParentRoute: () => rootRouteImport,
+const AuthAuthRegisterRoute = AuthAuthRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => AuthAuthRoute,
+} as any)
+const AuthAuthLoginRoute = AuthAuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthAuthRoute,
+} as any)
+const ProtectedAuthDashboardRoute = ProtectedAuthDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => ProtectedAuthRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/register': typeof AuthRegisterRoute
+  '/auth': typeof AuthAuthRouteWithChildren
   '/auth/requestPasswordReset': typeof AuthRequestPasswordResetRoute
-  '/posts/$postId': typeof PostsPostIdRoute
-  '/posts': typeof PostsIndexRoute
+  '/dashboard': typeof ProtectedAuthDashboardRoute
+  '/auth/login': typeof AuthAuthLoginRoute
+  '/auth/register': typeof AuthAuthRegisterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/register': typeof AuthRegisterRoute
+  '/auth': typeof AuthAuthRouteWithChildren
   '/auth/requestPasswordReset': typeof AuthRequestPasswordResetRoute
-  '/posts/$postId': typeof PostsPostIdRoute
-  '/posts': typeof PostsIndexRoute
+  '/dashboard': typeof ProtectedAuthDashboardRoute
+  '/auth/login': typeof AuthAuthLoginRoute
+  '/auth/register': typeof AuthAuthRegisterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/register': typeof AuthRegisterRoute
+  '/_protected/_auth': typeof ProtectedAuthRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
+  '/auth/_auth': typeof AuthAuthRouteWithChildren
   '/auth/requestPasswordReset': typeof AuthRequestPasswordResetRoute
-  '/posts/$postId': typeof PostsPostIdRoute
-  '/posts/': typeof PostsIndexRoute
+  '/_protected/_auth/dashboard': typeof ProtectedAuthDashboardRoute
+  '/auth/_auth/login': typeof AuthAuthLoginRoute
+  '/auth/_auth/register': typeof AuthAuthRegisterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
+    | '/auth/requestPasswordReset'
+    | '/dashboard'
     | '/auth/login'
     | '/auth/register'
-    | '/auth/requestPasswordReset'
-    | '/posts/$postId'
-    | '/posts'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
+    | '/auth/requestPasswordReset'
+    | '/dashboard'
     | '/auth/login'
     | '/auth/register'
-    | '/auth/requestPasswordReset'
-    | '/posts/$postId'
-    | '/posts'
   id:
     | '__root__'
     | '/'
-    | '/auth/login'
-    | '/auth/register'
+    | '/_protected/_auth'
+    | '/auth'
+    | '/auth/_auth'
     | '/auth/requestPasswordReset'
-    | '/posts/$postId'
-    | '/posts/'
+    | '/_protected/_auth/dashboard'
+    | '/auth/_auth/login'
+    | '/auth/_auth/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthLoginRoute: typeof AuthLoginRoute
-  AuthRegisterRoute: typeof AuthRegisterRoute
-  AuthRequestPasswordResetRoute: typeof AuthRequestPasswordResetRoute
-  PostsPostIdRoute: typeof PostsPostIdRoute
-  PostsIndexRoute: typeof PostsIndexRoute
+  ProtectedAuthRoute: typeof ProtectedAuthRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -118,51 +139,93 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/posts/': {
-      id: '/posts/'
-      path: '/posts'
-      fullPath: '/posts'
-      preLoaderRoute: typeof PostsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/posts/$postId': {
-      id: '/posts/$postId'
-      path: '/posts/$postId'
-      fullPath: '/posts/$postId'
-      preLoaderRoute: typeof PostsPostIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth/requestPasswordReset': {
       id: '/auth/requestPasswordReset'
-      path: '/auth/requestPasswordReset'
+      path: '/requestPasswordReset'
       fullPath: '/auth/requestPasswordReset'
       preLoaderRoute: typeof AuthRequestPasswordResetRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/_auth': {
+      id: '/auth/_auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthAuthRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_protected/_auth': {
+      id: '/_protected/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ProtectedAuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/register': {
-      id: '/auth/register'
-      path: '/auth/register'
+    '/auth/_auth/register': {
+      id: '/auth/_auth/register'
+      path: '/register'
       fullPath: '/auth/register'
-      preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthAuthRegisterRouteImport
+      parentRoute: typeof AuthAuthRoute
     }
-    '/auth/login': {
-      id: '/auth/login'
-      path: '/auth/login'
+    '/auth/_auth/login': {
+      id: '/auth/_auth/login'
+      path: '/login'
       fullPath: '/auth/login'
-      preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthAuthLoginRouteImport
+      parentRoute: typeof AuthAuthRoute
+    }
+    '/_protected/_auth/dashboard': {
+      id: '/_protected/_auth/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof ProtectedAuthDashboardRouteImport
+      parentRoute: typeof ProtectedAuthRoute
     }
   }
 }
 
+interface ProtectedAuthRouteChildren {
+  ProtectedAuthDashboardRoute: typeof ProtectedAuthDashboardRoute
+}
+
+const ProtectedAuthRouteChildren: ProtectedAuthRouteChildren = {
+  ProtectedAuthDashboardRoute: ProtectedAuthDashboardRoute,
+}
+
+const ProtectedAuthRouteWithChildren = ProtectedAuthRoute._addFileChildren(
+  ProtectedAuthRouteChildren,
+)
+
+interface AuthAuthRouteChildren {
+  AuthAuthLoginRoute: typeof AuthAuthLoginRoute
+  AuthAuthRegisterRoute: typeof AuthAuthRegisterRoute
+}
+
+const AuthAuthRouteChildren: AuthAuthRouteChildren = {
+  AuthAuthLoginRoute: AuthAuthLoginRoute,
+  AuthAuthRegisterRoute: AuthAuthRegisterRoute,
+}
+
+const AuthAuthRouteWithChildren = AuthAuthRoute._addFileChildren(
+  AuthAuthRouteChildren,
+)
+
+interface AuthRouteChildren {
+  AuthAuthRoute: typeof AuthAuthRouteWithChildren
+  AuthRequestPasswordResetRoute: typeof AuthRequestPasswordResetRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthAuthRoute: AuthAuthRouteWithChildren,
+  AuthRequestPasswordResetRoute: AuthRequestPasswordResetRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthLoginRoute: AuthLoginRoute,
-  AuthRegisterRoute: AuthRegisterRoute,
-  AuthRequestPasswordResetRoute: AuthRequestPasswordResetRoute,
-  PostsPostIdRoute: PostsPostIdRoute,
-  PostsIndexRoute: PostsIndexRoute,
+  ProtectedAuthRoute: ProtectedAuthRouteWithChildren,
+  AuthRoute: AuthRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
