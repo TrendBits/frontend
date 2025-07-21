@@ -8,7 +8,6 @@ const isAuthenticated = async () => {
   if (!token) return false;
   try {
     const validatetionResponse = await validateToken();
-    console.log("Validation Response:", validatetionResponse);
     return validatetionResponse;
   } catch (_error) {
     return false;
