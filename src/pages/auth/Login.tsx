@@ -24,8 +24,8 @@ const Login = () => {
       return await loginUser(data);
     },
     onSuccess: (response: any) => {
-      setToken(response.data.data.access_token);
-      navigate({ to: redirect || "/dashboard", replace: true });
+      setToken(response.data.access_token);
+      navigate({ to: redirect || "/prompt", replace: true });
       toast.success("Login successful!");
     },
   });
