@@ -12,3 +12,15 @@ export const registerUser = async (userInfo: AuthUserInputType) => {
 export const validateToken = async () => {
   return await api.get("auth/validate", { addToken: true } as CustomAxiosRequestConfig);
 };
+
+export const requestResetPass = async (email: string) => {
+  return await api.post("auth/request-reset-password", { email });
+}
+
+export const verifyResetPassToken = async (token: string) => {
+  return await api.get(`auth/verify-reset-token`, { params: { token } });
+};
+
+export const resetPassword = async (email: string, password: string) => {
+  return await api.post(`auth/reset-password`, { email, password });
+}

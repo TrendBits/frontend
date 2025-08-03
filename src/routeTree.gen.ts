@@ -12,13 +12,13 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthRequestPasswordResetRouteImport } from './routes/auth/requestPasswordReset'
 import { Route as AuthAuthRouteImport } from './routes/auth/_auth'
 import { Route as ProtectedAuthRouteImport } from './routes/_protected/_auth'
+import { Route as AuthRequestPasswordVerifyRouteImport } from './routes/auth/request-password/verify'
+import { Route as AuthRequestPasswordResetRouteImport } from './routes/auth/request-password/reset'
 import { Route as AuthAuthRegisterRouteImport } from './routes/auth/_auth.register'
 import { Route as AuthAuthLoginRouteImport } from './routes/auth/_auth.login'
 import { Route as ProtectedAuthPromptRouteImport } from './routes/_protected/_auth.prompt'
-import { Route as ProtectedAuthDashboardRouteImport } from './routes/_protected/_auth.dashboard'
 
 const AuthRouteImport = createFileRoute('/auth')()
 
@@ -32,12 +32,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRequestPasswordResetRoute =
-  AuthRequestPasswordResetRouteImport.update({
-    id: '/requestPasswordReset',
-    path: '/requestPasswordReset',
-    getParentRoute: () => AuthRoute,
-  } as any)
 const AuthAuthRoute = AuthAuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => AuthRoute,
@@ -46,6 +40,18 @@ const ProtectedAuthRoute = ProtectedAuthRouteImport.update({
   id: '/_protected/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRequestPasswordVerifyRoute =
+  AuthRequestPasswordVerifyRouteImport.update({
+    id: '/request-password/verify',
+    path: '/request-password/verify',
+    getParentRoute: () => AuthRoute,
+  } as any)
+const AuthRequestPasswordResetRoute =
+  AuthRequestPasswordResetRouteImport.update({
+    id: '/request-password/reset',
+    path: '/request-password/reset',
+    getParentRoute: () => AuthRoute,
+  } as any)
 const AuthAuthRegisterRoute = AuthAuthRegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -61,29 +67,24 @@ const ProtectedAuthPromptRoute = ProtectedAuthPromptRouteImport.update({
   path: '/prompt',
   getParentRoute: () => ProtectedAuthRoute,
 } as any)
-const ProtectedAuthDashboardRoute = ProtectedAuthDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => ProtectedAuthRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthAuthRouteWithChildren
-  '/auth/requestPasswordReset': typeof AuthRequestPasswordResetRoute
-  '/dashboard': typeof ProtectedAuthDashboardRoute
   '/prompt': typeof ProtectedAuthPromptRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
+  '/auth/request-password/reset': typeof AuthRequestPasswordResetRoute
+  '/auth/request-password/verify': typeof AuthRequestPasswordVerifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthAuthRouteWithChildren
-  '/auth/requestPasswordReset': typeof AuthRequestPasswordResetRoute
-  '/dashboard': typeof ProtectedAuthDashboardRoute
   '/prompt': typeof ProtectedAuthPromptRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
+  '/auth/request-password/reset': typeof AuthRequestPasswordResetRoute
+  '/auth/request-password/verify': typeof AuthRequestPasswordVerifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -91,42 +92,42 @@ export interface FileRoutesById {
   '/_protected/_auth': typeof ProtectedAuthRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/auth/_auth': typeof AuthAuthRouteWithChildren
-  '/auth/requestPasswordReset': typeof AuthRequestPasswordResetRoute
-  '/_protected/_auth/dashboard': typeof ProtectedAuthDashboardRoute
   '/_protected/_auth/prompt': typeof ProtectedAuthPromptRoute
   '/auth/_auth/login': typeof AuthAuthLoginRoute
   '/auth/_auth/register': typeof AuthAuthRegisterRoute
+  '/auth/request-password/reset': typeof AuthRequestPasswordResetRoute
+  '/auth/request-password/verify': typeof AuthRequestPasswordVerifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
-    | '/auth/requestPasswordReset'
-    | '/dashboard'
     | '/prompt'
     | '/auth/login'
     | '/auth/register'
+    | '/auth/request-password/reset'
+    | '/auth/request-password/verify'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/auth/requestPasswordReset'
-    | '/dashboard'
     | '/prompt'
     | '/auth/login'
     | '/auth/register'
+    | '/auth/request-password/reset'
+    | '/auth/request-password/verify'
   id:
     | '__root__'
     | '/'
     | '/_protected/_auth'
     | '/auth'
     | '/auth/_auth'
-    | '/auth/requestPasswordReset'
-    | '/_protected/_auth/dashboard'
     | '/_protected/_auth/prompt'
     | '/auth/_auth/login'
     | '/auth/_auth/register'
+    | '/auth/request-password/reset'
+    | '/auth/request-password/verify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -151,13 +152,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/requestPasswordReset': {
-      id: '/auth/requestPasswordReset'
-      path: '/requestPasswordReset'
-      fullPath: '/auth/requestPasswordReset'
-      preLoaderRoute: typeof AuthRequestPasswordResetRouteImport
-      parentRoute: typeof AuthRoute
-    }
     '/auth/_auth': {
       id: '/auth/_auth'
       path: '/auth'
@@ -171,6 +165,20 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof ProtectedAuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth/request-password/verify': {
+      id: '/auth/request-password/verify'
+      path: '/request-password/verify'
+      fullPath: '/auth/request-password/verify'
+      preLoaderRoute: typeof AuthRequestPasswordVerifyRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/request-password/reset': {
+      id: '/auth/request-password/reset'
+      path: '/request-password/reset'
+      fullPath: '/auth/request-password/reset'
+      preLoaderRoute: typeof AuthRequestPasswordResetRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/auth/_auth/register': {
       id: '/auth/_auth/register'
@@ -193,23 +201,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedAuthPromptRouteImport
       parentRoute: typeof ProtectedAuthRoute
     }
-    '/_protected/_auth/dashboard': {
-      id: '/_protected/_auth/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof ProtectedAuthDashboardRouteImport
-      parentRoute: typeof ProtectedAuthRoute
-    }
   }
 }
 
 interface ProtectedAuthRouteChildren {
-  ProtectedAuthDashboardRoute: typeof ProtectedAuthDashboardRoute
   ProtectedAuthPromptRoute: typeof ProtectedAuthPromptRoute
 }
 
 const ProtectedAuthRouteChildren: ProtectedAuthRouteChildren = {
-  ProtectedAuthDashboardRoute: ProtectedAuthDashboardRoute,
   ProtectedAuthPromptRoute: ProtectedAuthPromptRoute,
 }
 
@@ -234,11 +233,13 @@ const AuthAuthRouteWithChildren = AuthAuthRoute._addFileChildren(
 interface AuthRouteChildren {
   AuthAuthRoute: typeof AuthAuthRouteWithChildren
   AuthRequestPasswordResetRoute: typeof AuthRequestPasswordResetRoute
+  AuthRequestPasswordVerifyRoute: typeof AuthRequestPasswordVerifyRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthAuthRoute: AuthAuthRouteWithChildren,
   AuthRequestPasswordResetRoute: AuthRequestPasswordResetRoute,
+  AuthRequestPasswordVerifyRoute: AuthRequestPasswordVerifyRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

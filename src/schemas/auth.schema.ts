@@ -9,4 +9,9 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+export const verifyTokenSchema = z.object({
+  token: z.string().optional(),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
+export type VerifyTokenParamsType = z.infer<typeof verifyTokenSchema>;
