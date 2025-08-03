@@ -1,9 +1,11 @@
 import { WandSparkles } from "lucide-react";
 import { RootLayout } from "../../components/Layouts";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { getHotTrends } from "../../api/trends.api";
+import { generateSummary } from "../../api/prompts.api";
 import DynamicIcon from "../../components/ui/DynamicIcon";
+import { toast } from "sonner";
 
 const Prompt = () => {
   const [prompt, setPrompt] = useState("");
@@ -18,6 +20,21 @@ const Prompt = () => {
     refetchOnMount: false,
   });
 
+  // Generate summary mutation
+  const generateSummaryMutation = useMutation({
+    mutationFn: (searchPrompt: string) => generateSummary(searchPrompt),
+    onSuccess: (data) => {
+      console.log('Summary generated:', data);
+      toast.success("AI summary generated successfully!");
+      // TODO: Handle successful summary generation (e.g., navigate to results page)
+    },
+    onError: (error: any) => {
+      console.error('Error generating summary:', error);
+      const errorMessage = error?.response?.data?.message || error?.message || "Failed to generate AI summary. Please try again.";
+      toast.error(errorMessage);
+    },
+  });
+
   // Extract topics from the API response
   const aiTopicSuggestions = hotTrendsData?.data?.topics || [];
 
@@ -27,8 +44,7 @@ const Prompt = () => {
 
   const handleSearch = () => {
     if (prompt.trim()) {
-      console.log('Searching for:', prompt);
-      // TODO: Add search functionality here
+      generateSummaryMutation.mutate(prompt.trim());
     }
   };
 
@@ -46,14 +62,17 @@ const Prompt = () => {
               placeholder="Search most recent AI trends (e.g., OpenAI funding, Google Gemini 2.5, Meta AI strategy)"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
+              disabled={generateSummaryMutation.isPending}
             />
 
             <div className="flex ml-auto items-center gap-2">
               <button 
                 onClick={handleSearch}
-                className="text-sm transition-all px-3 py-2 bg-primaryDark text-white hover:bg-primary rounded-md flex items-center font-medium"
+                disabled={!prompt.trim() || generateSummaryMutation.isPending}
+                className="text-sm transition-all px-3 py-2 bg-primaryDark text-white hover:bg-primary rounded-md flex items-center font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <WandSparkles size={18} className="mr-2" /> Search AI Trends
+                <WandSparkles size={18} className="mr-2" /> 
+                {generateSummaryMutation.isPending ? 'Generating...' : 'Search AI Trends'}
               </button>
             </div>
           </div>
