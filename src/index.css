@@ -10,9 +10,9 @@
   --color-mainBg: #fefdf3;
   --color-secondaryBg: #fffaf5;
   --color-lightGray: #fcfdfd;
-  --color-primary: #fba788;
+  --color-customprimary: #fba788;
   --color-primaryDark: #f09974;
-  --color-accent: #9ad4d5;
+  --color-customaccent: #9ad4d5;
 }
 
 :root {

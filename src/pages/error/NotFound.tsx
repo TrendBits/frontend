@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Home, ArrowLeft } from "lucide-react";
 import { RootLayout } from "../../components/Layouts";
-import { Button } from "../../components/ui";
+import { CustomButton } from "../../components/ui";
 
 const NotFound = () => {
   return (
@@ -9,7 +9,7 @@ const NotFound = () => {
       <div className="text-center max-w-md mx-auto px-6">
         {/* 404 Number */}
         <div className="mb-8">
-          <h1 className="text-8xl md:text-9xl font-bold text-primary mb-4">404</h1>
+          <h1 className="text-8xl md:text-9xl font-bold text-customprimary mb-4">404</h1>
           <div className="w-24 h-1 bg-primary mx-auto rounded-full"></div>
         </div>
 
@@ -21,17 +21,17 @@ const NotFound = () => {
           </p>
         </div>
 
-        {/* Action Buttons */}
+        {/* Action CustomButtons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button onClick={() => window.history.back()} variant="outline" className="flex items-center gap-2">
+          <CustomButton onClick={() => window.history.back()} variant="outline" className="flex items-center gap-2">
             <ArrowLeft size={18} />
             Go Back
-          </Button>
+          </CustomButton>
           <Link to="/">
-            <Button className="flex items-center gap-2 w-full sm:w-auto">
+            <CustomButton className="flex items-center gap-2 w-full sm:w-auto">
               <Home size={18} />
               Go Home
-            </Button>
+            </CustomButton>
           </Link>
         </div>
       </div>

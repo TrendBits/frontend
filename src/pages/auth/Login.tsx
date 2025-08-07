@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 
 import { RootLayout } from "../../components/Layouts";
-import { Button, Input } from "../../components/ui";
+import { CustomButton, CustomInput } from "../../components/ui";
 import Logo from "../../assets/logo.png";
 import { getRouteApi, Link, useNavigate } from "@tanstack/react-router";
 import { loginUser } from "../../api/auth.api";
@@ -74,7 +74,7 @@ const Login = () => {
             },
           }}
           children={(field) => (
-            <Input
+            <CustomInput
               type="email"
               name={field.name}
               placeholder="example@mail.com"
@@ -97,7 +97,7 @@ const Login = () => {
             },
           }}
           children={(field) => (
-            <Input
+            <CustomInput
               type={showPassword ? "text" : "password"}
               name={field.name}
               value={field.state.value}
@@ -116,20 +116,20 @@ const Login = () => {
 
         {/* Forgot Password */}
         <div className="flex justify-end w-full">
-          <Link to="/auth/request-password/reset" className="text-primary hover:underline hover:text-primaryDark font-medium text-sm">
+          <Link to="/auth/request-password/reset" className="text-customprimary hover:underline hover:text-primaryDark font-medium text-sm">
             Forgot Password?
           </Link>
         </div>
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full" disabled={!form.state.isValid || loginMutation.isPending}>
+        <CustomButton type="submit" className="w-full" disabled={!form.state.isValid || loginMutation.isPending}>
           {loginMutation.isPending ? "Logging In..." : "Login your account"}
-        </Button>
+        </CustomButton>
 
         {/* Bottom text */}
         <p className="text-center text-sm text-gray-400">
           Don't have an account?{" "}
-          <Link to="/auth/register" className="text-primary hover:underline hover:text-primaryDark font-bold">
+          <Link to="/auth/register" className="text-customprimary hover:underline hover:text-primaryDark font-bold">
             Register
           </Link>
         </p>

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 
 import { RootLayout } from "../../components/Layouts";
-import { Button, Input } from "../../components/ui";
+import { CustomButton, CustomInput } from "../../components/ui";
 import Logo from "../../assets/logo.png";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { requestResetPass } from "../../api/auth.api";
@@ -91,13 +91,13 @@ const RequestResetPassword = () => {
     mutationFn: async (email: string) => {
       return await requestResetPass(email);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       setEmailSent(true);
       
       // Navigate to login after 15 seconds
       setTimeout(() => {
         navigate({ to: "/auth/login" });
-      }, 15_000);
+      }, 15000);
     },
     onError: (error: any) => {
       // Error will be handled by the form's error display
@@ -141,13 +141,11 @@ const RequestResetPassword = () => {
     <RootLayout className="justify-center items-center flex">
       {/* Password Recovery Form */}
       <div className="flex flex-col items-center justify-center w-full max-w-xs px-8 sm:px-6 md:px-0 gap-6">
-        {/* Logo - Only show when email is not sent */}
-        {!emailSent && (
-          <div className="flex flex-col items-center mb-2">
-            <img src={Logo} alt="TrendBits Logo" className="w-12 h-12" />
-            {/* <h2 className="font-fredoka font-medium text-3xl">TrendBits</h2> */}
-          </div>
-        )}
+        {/* Logo */}
+        <div className="flex flex-col items-center mb-2">
+          <img src={Logo} alt="TrendBits Logo" className="w-16 h-16" />
+          <h2 className="font-fredoka font-medium text-3xl">TrendBits</h2>
+        </div>
 
         {emailSent ? (
           // Success State
@@ -197,7 +195,7 @@ const RequestResetPassword = () => {
                   },
                 }}
                 children={(field) => (
-                  <Input
+                  <CustomInput
                     type="email"
                     name={field.name}
                     placeholder="example@mail.com"
@@ -212,9 +210,9 @@ const RequestResetPassword = () => {
                 )}
               />
 
-              {/* Submit Button */}
+              {/* Submit CustomButton */}
               <div className="w-full space-y-2">
-                <Button
+                <CustomButton
                   type="submit"
                   className="w-full"
                   disabled={!form.state.isValid || resetPasswordMutation.isPending || !canMakeRequest()}
@@ -225,8 +223,8 @@ const RequestResetPassword = () => {
                       ? `Wait ${cooldownRemaining}s`
                       : isRequestLimited
                         ? "Limit reached"
-                        : "Send reset email"}
-                </Button>
+                        : "Send reset link"}
+                </CustomButton>
 
                 {/* Rate limit feedback */}
                 {cooldownRemaining > 0 && (
@@ -254,8 +252,8 @@ const RequestResetPassword = () => {
 
         {/* Bottom text */}
         <p className="text-center text-sm text-gray-400 mt-6">
-          Remember Password?{" "}
-          <Link to="/auth/login" className="text-primary hover:underline hover:text-primaryDark font-bold">
+          Have an account?{" "}
+          <Link to="/auth/login" className="text-customprimary hover:underline hover:text-primaryDark font-bold">
             Login
           </Link>
         </p>

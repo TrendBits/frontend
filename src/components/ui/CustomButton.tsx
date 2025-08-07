@@ -7,7 +7,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const CustomButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = 'primary', size = 'md', className = "", children, ...props }, ref) => {
     const baseClasses = `
       font-medium rounded-xl transition-all duration-200 ease-in-out
@@ -16,7 +16,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantClasses = {
       primary: `
-        bg-primary text-white
+        bg-customprimary text-white
         shadow-[0_0_0_1px_#FBA788]
         hover:bg-[#f09974] hover:shadow-[0_0_0_1px_#f09974]
         focus:shadow-[0_0_0_3px_rgba(251,167,136,0.3)]
@@ -28,9 +28,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         focus:shadow-[0_0_0_1px_#FBA788]
       `,
       outline: `
-        bg-transparent text-primary
+        bg-transparent text-customprimary
         shadow-[0_0_0_1px_#FBA788]
-        hover:bg-primary hover:text-white
+        hover:bg-customprimary hover:text-white
         focus:shadow-[0_0_0_1px_rgba(251,167,136,0.3)]
       `
     };
@@ -58,6 +58,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
-Button.displayName = 'Button';
+CustomButton.displayName = 'CustomButton';
 
-export default Button;
+export default CustomButton;
