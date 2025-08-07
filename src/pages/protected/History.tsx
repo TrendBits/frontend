@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
-import { Search, Clock, FileText, ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { Search, Clock, FileText, ChevronLeft, ChevronRight } from "lucide-react";
 import { RootLayout } from "../../components/Layouts";
 import { getPromptHistoryList } from "../../api/prompts.api";
 import { toast } from "sonner";
@@ -37,7 +37,6 @@ const History = () => {
   const historyItems: HistoryItem[] = historyData?.data?.trends || [];
   const totalItems = historyData?.data?.pagination?.total_items || 0;
   const totalPages = historyData?.data?.pagination?.total_pages || 0;
-  const currentPage = historyData?.data?.pagination?.current_page || 1;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

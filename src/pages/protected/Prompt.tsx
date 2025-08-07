@@ -6,7 +6,6 @@ import { getHotTrends } from "../../api/trends.api";
 import { generateSummary } from "../../api/prompts.api";
 import DynamicIcon from "../../components/ui/DynamicIcon";
 import { toast } from "sonner";
-import ProtectedNavbar from "@/components/ui/ProtectedNavbar";
 
 const Prompt = () => {
   const [prompt, setPrompt] = useState("");
