@@ -91,7 +91,7 @@ const RequestResetPassword = () => {
     mutationFn: async (email: string) => {
       return await requestResetPass(email);
     },
-    onSuccess: (response) => {
+    onSuccess: () => {
       setEmailSent(true);
       
       // Navigate to login after 15 seconds
