@@ -20,7 +20,7 @@ interface HistoryItem {
 
 const History = () => {
   const navigate = useNavigate();
-  const search = useSearch({ from: '/_protected/_auth/history' });
+  const search = useSearch({ from: '/_protected/_auth/history/' });
   const [searchQuery, setSearchQuery] = useState(search.q || "");
   
   const { page = 1, limit = 10, q } = search;
@@ -176,13 +176,22 @@ const History = () => {
                   <div className="text-xs text-gray-400">
                     ID: {item.id.split('-')[0]}...
                   </div>
-                  <Link
-                    to="/prompt"
-                    search={{ prompt: item.search_term }}
-                    className="text-customprimary hover:text-primaryDark font-medium text-sm transition-colors"
-                  >
-                    Use Search Term →
-                  </Link>
+                  <div className="flex items-center gap-3">
+                    <Link
+                      to="/history/$summary_id"
+                      params={{ summary_id: item.id }}
+                      className="text-customprimary hover:text-primaryDark font-medium text-sm transition-colors"
+                    >
+                      View Details →
+                    </Link>
+                    <Link
+                      to="/prompt"
+                      search={{ prompt: item.search_term }}
+                      className="text-gray-600 hover:text-customprimary font-medium text-sm transition-colors"
+                    >
+                      Use Search Term →
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))

@@ -8,7 +8,7 @@ const historySearchSchema = z.object({
   q: z.string().optional(),
 })
 
-export const Route = createFileRoute('/_protected/_auth/history')({
+export const Route = createFileRoute('/_protected/_auth/history/')({
   validateSearch: historySearchSchema,
   component: RouteComponent,
 })

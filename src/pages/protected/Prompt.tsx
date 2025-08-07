@@ -2,6 +2,7 @@ import { WandSparkles } from "lucide-react";
 import { RootLayout } from "../../components/Layouts";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { getHotTrends } from "../../api/trends.api";
 import { generateSummary } from "../../api/prompts.api";
 import DynamicIcon from "../../components/ui/DynamicIcon";
@@ -9,6 +10,7 @@ import { toast } from "sonner";
 
 const Prompt = () => {
   const [prompt, setPrompt] = useState("");
+  const navigate = useNavigate();
   
   // Fetch hot trends with React Query - cache for 12 hours
   const { data: hotTrendsData, isLoading } = useQuery({
@@ -24,9 +26,16 @@ const Prompt = () => {
   const generateSummaryMutation = useMutation({
     mutationFn: (searchPrompt: string) => generateSummary(searchPrompt),
     onSuccess: (data) => {
-      console.log('Summary generated:', data);
       toast.success("AI summary generated successfully!");
-      // TODO: Handle successful summary generation (e.g., navigate to results page)
+      
+      // Navigate to the summary page with the returned summary ID
+      const summaryId = data?.data?.id || data?.data?.summary_id;
+      if (summaryId) {
+        navigate({ to: `/history/${summaryId}` });
+      } else {
+        console.error('No summary ID returned from API');
+        toast.error('Summary generated but navigation failed. Check your history.');
+      }
     },
     onError: (error: any) => {
       console.error('Error generating summary:', error);

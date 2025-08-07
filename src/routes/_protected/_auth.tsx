@@ -31,10 +31,10 @@ export const Route = createFileRoute("/_protected/_auth")({
   },
   component: () => {
     return (
-      <>
+      <div className="min-w-dvw">
         <ProtectedNavbar/>
         <Outlet/>
-      </>
+      </div>
     );
   },
 });

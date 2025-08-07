@@ -19,7 +19,8 @@ import { Route as AuthRequestPasswordResetRouteImport } from './routes/auth/requ
 import { Route as AuthAuthRegisterRouteImport } from './routes/auth/_auth.register'
 import { Route as AuthAuthLoginRouteImport } from './routes/auth/_auth.login'
 import { Route as ProtectedAuthPromptRouteImport } from './routes/_protected/_auth.prompt'
-import { Route as ProtectedAuthHistoryRouteImport } from './routes/_protected/_auth.history'
+import { Route as ProtectedAuthHistoryIndexRouteImport } from './routes/_protected/_auth.history/index'
+import { Route as ProtectedAuthHistorySummary_idRouteImport } from './routes/_protected/_auth.history/$summary_id'
 
 const AuthRouteImport = createFileRoute('/auth')()
 
@@ -68,31 +69,40 @@ const ProtectedAuthPromptRoute = ProtectedAuthPromptRouteImport.update({
   path: '/prompt',
   getParentRoute: () => ProtectedAuthRoute,
 } as any)
-const ProtectedAuthHistoryRoute = ProtectedAuthHistoryRouteImport.update({
-  id: '/history',
-  path: '/history',
-  getParentRoute: () => ProtectedAuthRoute,
-} as any)
+const ProtectedAuthHistoryIndexRoute =
+  ProtectedAuthHistoryIndexRouteImport.update({
+    id: '/history/',
+    path: '/history/',
+    getParentRoute: () => ProtectedAuthRoute,
+  } as any)
+const ProtectedAuthHistorySummary_idRoute =
+  ProtectedAuthHistorySummary_idRouteImport.update({
+    id: '/history/$summary_id',
+    path: '/history/$summary_id',
+    getParentRoute: () => ProtectedAuthRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthAuthRouteWithChildren
-  '/history': typeof ProtectedAuthHistoryRoute
   '/prompt': typeof ProtectedAuthPromptRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
   '/auth/request-password/reset': typeof AuthRequestPasswordResetRoute
   '/auth/request-password/verify': typeof AuthRequestPasswordVerifyRoute
+  '/history/$summary_id': typeof ProtectedAuthHistorySummary_idRoute
+  '/history': typeof ProtectedAuthHistoryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthAuthRouteWithChildren
-  '/history': typeof ProtectedAuthHistoryRoute
   '/prompt': typeof ProtectedAuthPromptRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
   '/auth/request-password/reset': typeof AuthRequestPasswordResetRoute
   '/auth/request-password/verify': typeof AuthRequestPasswordVerifyRoute
+  '/history/$summary_id': typeof ProtectedAuthHistorySummary_idRoute
+  '/history': typeof ProtectedAuthHistoryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -100,46 +110,50 @@ export interface FileRoutesById {
   '/_protected/_auth': typeof ProtectedAuthRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/auth/_auth': typeof AuthAuthRouteWithChildren
-  '/_protected/_auth/history': typeof ProtectedAuthHistoryRoute
   '/_protected/_auth/prompt': typeof ProtectedAuthPromptRoute
   '/auth/_auth/login': typeof AuthAuthLoginRoute
   '/auth/_auth/register': typeof AuthAuthRegisterRoute
   '/auth/request-password/reset': typeof AuthRequestPasswordResetRoute
   '/auth/request-password/verify': typeof AuthRequestPasswordVerifyRoute
+  '/_protected/_auth/history/$summary_id': typeof ProtectedAuthHistorySummary_idRoute
+  '/_protected/_auth/history/': typeof ProtectedAuthHistoryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
-    | '/history'
     | '/prompt'
     | '/auth/login'
     | '/auth/register'
     | '/auth/request-password/reset'
     | '/auth/request-password/verify'
+    | '/history/$summary_id'
+    | '/history'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/history'
     | '/prompt'
     | '/auth/login'
     | '/auth/register'
     | '/auth/request-password/reset'
     | '/auth/request-password/verify'
+    | '/history/$summary_id'
+    | '/history'
   id:
     | '__root__'
     | '/'
     | '/_protected/_auth'
     | '/auth'
     | '/auth/_auth'
-    | '/_protected/_auth/history'
     | '/_protected/_auth/prompt'
     | '/auth/_auth/login'
     | '/auth/_auth/register'
     | '/auth/request-password/reset'
     | '/auth/request-password/verify'
+    | '/_protected/_auth/history/$summary_id'
+    | '/_protected/_auth/history/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -213,24 +227,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedAuthPromptRouteImport
       parentRoute: typeof ProtectedAuthRoute
     }
-    '/_protected/_auth/history': {
-      id: '/_protected/_auth/history'
+    '/_protected/_auth/history/': {
+      id: '/_protected/_auth/history/'
       path: '/history'
       fullPath: '/history'
-      preLoaderRoute: typeof ProtectedAuthHistoryRouteImport
+      preLoaderRoute: typeof ProtectedAuthHistoryIndexRouteImport
+      parentRoute: typeof ProtectedAuthRoute
+    }
+    '/_protected/_auth/history/$summary_id': {
+      id: '/_protected/_auth/history/$summary_id'
+      path: '/history/$summary_id'
+      fullPath: '/history/$summary_id'
+      preLoaderRoute: typeof ProtectedAuthHistorySummary_idRouteImport
       parentRoute: typeof ProtectedAuthRoute
     }
   }
 }
 
 interface ProtectedAuthRouteChildren {
-  ProtectedAuthHistoryRoute: typeof ProtectedAuthHistoryRoute
   ProtectedAuthPromptRoute: typeof ProtectedAuthPromptRoute
+  ProtectedAuthHistorySummary_idRoute: typeof ProtectedAuthHistorySummary_idRoute
+  ProtectedAuthHistoryIndexRoute: typeof ProtectedAuthHistoryIndexRoute
 }
 
 const ProtectedAuthRouteChildren: ProtectedAuthRouteChildren = {
-  ProtectedAuthHistoryRoute: ProtectedAuthHistoryRoute,
   ProtectedAuthPromptRoute: ProtectedAuthPromptRoute,
+  ProtectedAuthHistorySummary_idRoute: ProtectedAuthHistorySummary_idRoute,
+  ProtectedAuthHistoryIndexRoute: ProtectedAuthHistoryIndexRoute,
 }
 
 const ProtectedAuthRouteWithChildren = ProtectedAuthRoute._addFileChildren(
