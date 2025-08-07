@@ -19,6 +19,7 @@ import { Route as AuthRequestPasswordResetRouteImport } from './routes/auth/requ
 import { Route as AuthAuthRegisterRouteImport } from './routes/auth/_auth.register'
 import { Route as AuthAuthLoginRouteImport } from './routes/auth/_auth.login'
 import { Route as ProtectedAuthPromptRouteImport } from './routes/_protected/_auth.prompt'
+import { Route as ProtectedAuthHistoryRouteImport } from './routes/_protected/_auth.history'
 
 const AuthRouteImport = createFileRoute('/auth')()
 
@@ -67,10 +68,16 @@ const ProtectedAuthPromptRoute = ProtectedAuthPromptRouteImport.update({
   path: '/prompt',
   getParentRoute: () => ProtectedAuthRoute,
 } as any)
+const ProtectedAuthHistoryRoute = ProtectedAuthHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => ProtectedAuthRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthAuthRouteWithChildren
+  '/history': typeof ProtectedAuthHistoryRoute
   '/prompt': typeof ProtectedAuthPromptRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthAuthRouteWithChildren
+  '/history': typeof ProtectedAuthHistoryRoute
   '/prompt': typeof ProtectedAuthPromptRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/_protected/_auth': typeof ProtectedAuthRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/auth/_auth': typeof AuthAuthRouteWithChildren
+  '/_protected/_auth/history': typeof ProtectedAuthHistoryRoute
   '/_protected/_auth/prompt': typeof ProtectedAuthPromptRoute
   '/auth/_auth/login': typeof AuthAuthLoginRoute
   '/auth/_auth/register': typeof AuthAuthRegisterRoute
@@ -103,6 +112,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/history'
     | '/prompt'
     | '/auth/login'
     | '/auth/register'
@@ -112,6 +122,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/history'
     | '/prompt'
     | '/auth/login'
     | '/auth/register'
@@ -123,6 +134,7 @@ export interface FileRouteTypes {
     | '/_protected/_auth'
     | '/auth'
     | '/auth/_auth'
+    | '/_protected/_auth/history'
     | '/_protected/_auth/prompt'
     | '/auth/_auth/login'
     | '/auth/_auth/register'
@@ -201,14 +213,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedAuthPromptRouteImport
       parentRoute: typeof ProtectedAuthRoute
     }
+    '/_protected/_auth/history': {
+      id: '/_protected/_auth/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof ProtectedAuthHistoryRouteImport
+      parentRoute: typeof ProtectedAuthRoute
+    }
   }
 }
 
 interface ProtectedAuthRouteChildren {
+  ProtectedAuthHistoryRoute: typeof ProtectedAuthHistoryRoute
   ProtectedAuthPromptRoute: typeof ProtectedAuthPromptRoute
 }
 
 const ProtectedAuthRouteChildren: ProtectedAuthRouteChildren = {
+  ProtectedAuthHistoryRoute: ProtectedAuthHistoryRoute,
   ProtectedAuthPromptRoute: ProtectedAuthPromptRoute,
 }
 

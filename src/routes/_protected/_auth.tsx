@@ -1,7 +1,8 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { clearToken, getToken } from "../../util/auth.util";
 import { validateToken } from "../../api/auth.api";
 import { toast } from "sonner";
+import ProtectedNavbar from "@/components/ui/ProtectedNavbar";
 
 const isAuthenticated = async () => {
   const token = getToken();
@@ -27,5 +28,13 @@ export const Route = createFileRoute("/_protected/_auth")({
         },
       });
     }
+  },
+  component: () => {
+    return (
+      <>
+        <ProtectedNavbar/>
+        <Outlet/>
+      </>
+    );
   },
 });

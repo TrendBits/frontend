@@ -27,7 +27,7 @@ const ProtectedNavbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-3">
             <Link
               to="/prompt"
               className={`transition-colors font-medium text-sm px-3 py-2 rounded-md ${
@@ -39,7 +39,7 @@ const ProtectedNavbar = () => {
               Prompts
             </Link>
             <Link
-              to="/"
+              to="/history"
               className={`transition-colors font-medium text-sm px-3 py-2 rounded-md ${
                 isActive('/history')
                   ? 'text-white bg-customprimary'

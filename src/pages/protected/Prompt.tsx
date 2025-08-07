@@ -15,8 +15,8 @@ const Prompt = () => {
   const { data: hotTrendsData, isLoading } = useQuery({
     queryKey: ['hotTrends'],
     queryFn: getHotTrends,
-    staleTime: 12 * 60 * 60 * 1000, // 12 hours in milliseconds
-    gcTime: 12 * 60 * 60 * 1000, // Keep in cache for 12 hours
+    staleTime: 12 * 60 * 60 * 1000,
+    gcTime: 12 * 60 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
@@ -50,8 +50,6 @@ const Prompt = () => {
   };
 
   return (
-    <>
-    <ProtectedNavbar/>
     <RootLayout className="justify-center items-center flex bg-mainBg">
         <div className="relative justify-center items-center m-auto z-10 px-5 w-full max-w-4xl py-16 sm:py-0">
           <h1 className="text-center mb-6 text-sm sm:text-xl font-medium text-gray-700">Discover the Latest Trends in Any Field</h1>
@@ -145,7 +143,6 @@ const Prompt = () => {
           </p>
         </div>
     </RootLayout>
-    </>
   );
 };
 
