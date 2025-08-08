@@ -24,3 +24,11 @@ export const verifyResetPassToken = async (token: string) => {
 export const resetPassword = async (email: string, password: string) => {
   return await api.post(`auth/reset-password`, { email, password });
 }
+
+export const getUserProfile = async () => {
+  return await api.get("auth/profile", { addToken: true } as CustomAxiosRequestConfig);
+};
+
+export const updateUsername = async (username: string) => {
+  return await api.put("auth/profile/username", { username }, { addToken: true } as CustomAxiosRequestConfig);
+};

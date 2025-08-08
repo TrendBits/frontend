@@ -122,7 +122,6 @@ const History = () => {
             </div>
           ) : historyItems.length > 0 ? (
             // History Items
-            // Update the history item rendering
             historyItems.map((item) => (
               <div key={item.id} className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 hover:border-customprimary hover:shadow-lg hover:bg-secondaryBg transition-all p-6 group">
                 <div className="flex items-start justify-between mb-4">
@@ -214,7 +213,7 @@ const History = () => {
                   onClick={() => {
                     setSearchQuery("");
                     navigate({ 
-                      to: '/',
+                      to: '/history',
                       search: { page: 1, limit } 
                     });
                   }}
@@ -235,7 +234,7 @@ const History = () => {
           )}
         </div>
 
-        {/* Stats and Pagination - moved to bottom */}
+        {/* Stats and Pagination */}
         {!isLoading && (
           <div className="border-t border-gray-200 pt-6">
             <div className="flex items-center justify-between mb-4">

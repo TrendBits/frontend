@@ -60,13 +60,13 @@ const Prompt = () => {
   return (
     <RootLayout className="justify-center items-center flex bg-mainBg">
         <div className="relative justify-center items-center m-auto z-10 px-5 w-full max-w-4xl py-16 sm:py-0">
-          <h1 className="text-center mb-6 text-sm sm:text-xl font-medium text-gray-700">Discover the Latest Trends in Any Field</h1>
+          <h1 className="text-center mb-6 text-sm sm:text-xl font-medium text-gray-700 animate-fade-in-up">Discover the Latest Trends in Any Field</h1>
 
-          <div className="w-full md:w-[560px] mx-auto bg-mainBg shadow-md rounded-xl border border-customprimary mb-6">
+          <div className="w-full md:w-[560px] mx-auto bg-mainBg shadow-md rounded-xl border border-customprimary mb-6 animate-slide-up hover:shadow-lg transition-all duration-300">
             <div className="bg-transparent flex flex-col p-4 rounded-lg gap-2">
               <textarea
                 id="prompt"
-                className="outline-none border-none w-full bg-transparent text-sm text-gray-800 py-1 font-poppins resize-none h-16"
+                className="outline-none border-none w-full bg-transparent text-sm text-gray-800 py-1 font-poppins resize-none h-16 transition-all duration-200 focus:scale-[1.01]"
                 placeholder="Search most recent AI trends (e.g., OpenAI funding, Google Gemini 2.5, Meta AI strategy)"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
@@ -77,9 +77,9 @@ const Prompt = () => {
                 <button 
                   onClick={handleSearch}
                   disabled={!prompt.trim() || generateSummaryMutation.isPending}
-                  className="text-sm transition-all px-3 py-2 bg-primaryDark text-white hover:bg-customprimary rounded-md flex items-center font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="text-sm transition-all duration-300 px-3 py-2 bg-primaryDark text-white hover:bg-customprimary hover:scale-105 hover:shadow-lg rounded-md flex items-center font-medium disabled:opacity-50 disabled:cursor-not-allowed group"
                 >
-                  <WandSparkles size={18} className="mr-2" /> 
+                  <WandSparkles size={18} className="mr-2 group-hover:rotate-12 transition-transform duration-300" /> 
                   {generateSummaryMutation.isPending ? 'Generating...' : 'Search AI Trends'}
                 </button>
               </div>
@@ -88,9 +88,9 @@ const Prompt = () => {
 
           {/* AI Topic Suggestions */}
           {(aiTopicSuggestions && aiTopicSuggestions.length > 0) && (
-            <div className="w-full max-w-4xl mx-auto">
+            <div className="w-full max-w-4xl mx-auto animate-fade-in-up-delay">
               <div className="flex items-center justify-center gap-2 mb-4">
-                <h3 className="text-lg font-semibold text-gray-800 text-center">🔥 Trending AI Topics</h3>
+                <h3 className="text-lg font-semibold text-gray-800 text-center animate-pulse-glow">🔥 Trending AI Topics</h3>
                 {isLoading && (
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
                 )}
@@ -107,10 +107,13 @@ const Prompt = () => {
                     <div
                       key={index}
                       onClick={() => handleSuggestionClick(query)}
-                      className="bg-white border border-gray-200 rounded-lg p-4 hover:border-customprimary hover:shadow-md transition-all cursor-pointer group"
+                      className={`bg-white border border-gray-200 rounded-lg p-4 hover:border-customprimary hover:shadow-lg transition-all duration-300 cursor-pointer group hover:scale-105 hover:-translate-y-1 animate-slide-in-card`}
+                      style={{
+                        animationDelay: `${index * 0.1}s`
+                      }}
                     >
                       <div className="flex items-start gap-3">
-                        <div className="text-customprimary group-hover:text-primaryDark transition-colors">
+                        <div className="text-customprimary group-hover:text-primaryDark transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
                           <DynamicIcon 
                             name={iconName} 
                             className="w-4 h-4" 
@@ -118,10 +121,10 @@ const Prompt = () => {
                           />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-medium text-gray-800 text-sm mb-1 group-hover:text-primaryDark transition-colors">
+                          <h4 className="font-medium text-gray-800 text-sm mb-1 group-hover:text-primaryDark transition-colors duration-300">
                             {title}
                           </h4>
-                          <p className="text-xs text-gray-600 leading-relaxed">
+                          <p className="text-xs text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
                             {description}
                           </p>
                         </div>
@@ -135,7 +138,7 @@ const Prompt = () => {
 
           {/* Loading state */}
           {isLoading && (
-            <div className="w-full max-w-4xl mx-auto text-center">
+            <div className="w-full max-w-4xl mx-auto text-center animate-fade-in-up">
               <div className="flex items-center justify-center gap-2 mb-4">
                 <h3 className="text-lg font-semibold text-gray-800">🔥 Loading Trending AI Topics</h3>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
@@ -143,10 +146,10 @@ const Prompt = () => {
             </div>
           )}
 
-          <p className="text-xs text-gray-500 mt-4 text-center font-poppins">
+          <p className="text-xs text-gray-500 mt-4 text-center font-poppins animate-fade-in-up-slow">
             🤖 <strong>AI Insights:</strong> {aiTopicSuggestions.length > 0 ? 'Click on trending topics above or search for specific AI developments, funding news, or technology breakthroughs.' : 'Search for specific AI developments, funding news, or technology breakthroughs.'}
             {hotTrendsData?.data?.topics && (
-              <span className="block mt-1 text-green-600">✓ Latest trends loaded</span>
+              <span className="block mt-1 text-green-600 animate-bounce-subtle">✓ Latest trends loaded</span>
             )}
           </p>
         </div>

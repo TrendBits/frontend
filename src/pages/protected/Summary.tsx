@@ -62,18 +62,18 @@ const Summary = ({ data }: SummaryProps) => {
 
   return (
     <RootLayout className="bg-mainBg">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header with Back Button */}
-        <div className="mb-8">
+        <div className="mb-8 animate-slide-up">
           <Link
             to="/history"
-            className="inline-flex items-center gap-2 text-customprimary hover:text-primaryDark font-medium mb-6 transition-colors"
+            className="inline-flex items-center gap-2 text-customprimary hover:text-primaryDark font-medium mb-6 transition-all hover:translate-x-1"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to History
           </Link>
           
-          <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-6">
+          <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-6 animate-fade-in-up">
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-3">
@@ -100,14 +100,14 @@ const Summary = ({ data }: SummaryProps) => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleCopy}
-                  className="flex items-center gap-2 px-3 py-2 text-sm bg-lightGray/80 hover:bg-customprimary/20 text-gray-700 hover:text-customprimary rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 text-sm bg-lightGray/80 hover:bg-customprimary/20 text-gray-700 hover:text-customprimary rounded-lg transition-all hover:scale-105"
                 >
                   <Copy className="w-4 h-4" />
                   {copied ? 'Copied!' : 'Copy'}
                 </button>
                 <button
                   onClick={handleDownload}
-                  className="flex items-center gap-2 px-3 py-2 text-sm bg-customprimary/20 hover:bg-customprimary/30 text-customprimary rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 text-sm bg-customprimary/20 hover:bg-customprimary/30 text-customprimary rounded-lg transition-all hover:scale-105"
                 >
                   <Download className="w-4 h-4" />
                   Download
@@ -126,7 +126,7 @@ const Summary = ({ data }: SummaryProps) => {
         {/* Main Content */}
         <div className="space-y-6">
           {/* Summary Section */}
-          <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-6">
+          <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-6 animate-slide-in-left">
             <div className="flex items-center gap-3 mb-4">
               <FileText className="w-5 h-5 text-customprimary" />
               <h2 className="text-xl font-semibold text-gray-800 font-fredoka">Summary</h2>
@@ -138,7 +138,7 @@ const Summary = ({ data }: SummaryProps) => {
 
           {/* Key Points Section */}
           {data.key_points && data.key_points.length > 0 && (
-            <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-6">
+            <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-6 animate-slide-in-right">
               <div className="flex items-center gap-3 mb-4">
                 <Lightbulb className="w-5 h-5 text-customprimary" />
                 <h2 className="text-xl font-semibold text-gray-800 font-fredoka">Key Points</h2>
@@ -146,7 +146,7 @@ const Summary = ({ data }: SummaryProps) => {
               <div className="bg-lightGray/80 rounded-lg p-4">
                 <ul className="space-y-3">
                   {data.key_points.map((point, index) => (
-                    <li key={index} className="flex items-start gap-3">
+                    <li key={index} className="flex items-start gap-3 animate-fade-in-up" style={{animationDelay: `${index * 0.1}s`}}>
                       <span className="w-2 h-2 bg-customprimary rounded-full mt-2 flex-shrink-0"></span>
                       <p className="text-gray-700 leading-relaxed">{point}</p>
                     </li>
@@ -158,7 +158,7 @@ const Summary = ({ data }: SummaryProps) => {
 
           {/* Call to Action Section */}
           {data.call_to_action && (
-            <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-6">
+            <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-6 animate-slide-in-left">
               <div className="flex items-center gap-3 mb-4">
                 <Target className="w-5 h-5 text-customprimary" />
                 <h2 className="text-xl font-semibold text-gray-800 font-fredoka">Call to Action</h2>
@@ -170,20 +170,20 @@ const Summary = ({ data }: SummaryProps) => {
           )}
 
           {/* Actions Section */}
-          <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-6">
+          <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-6 animate-fade-in-up-delay">
             <h2 className="text-xl font-semibold text-gray-800 font-fredoka mb-4">Actions</h2>
             <div className="flex flex-wrap gap-3">
               <Link
                 to="/prompt"
                 search={{ prompt: data.search_term }}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-customprimary text-white rounded-lg hover:bg-primaryDark transition-colors font-medium"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-customprimary text-white rounded-lg hover:bg-primaryDark transition-all font-medium hover:scale-105 focus:scale-[1.01]"
               >
                 <FileText className="w-4 h-4" />
                 Use Search Term Again
               </Link>
               <Link
                 to="/history"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-lightGray/80 hover:bg-customprimary/20 text-gray-700 hover:text-customprimary rounded-lg transition-colors font-medium"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-lightGray/80 hover:bg-customprimary/20 text-gray-700 hover:text-customprimary rounded-lg transition-all font-medium hover:scale-105 focus:scale-[1.01]"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back to History

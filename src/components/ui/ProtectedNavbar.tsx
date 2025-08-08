@@ -15,7 +15,7 @@ const ProtectedNavbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand Section */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <img src={Logo} alt="TrendBits Logo" className="w-8 h-8" />
               <div className="hidden sm:block">
                 <h1 className="font-fredoka font-semibold text-xl text-primaryDark">
@@ -23,7 +23,7 @@ const ProtectedNavbar = () => {
                 </h1>
                 <p className="text-xs text-gray-600 -mt-1">Discover AI Trends</p>
               </div>
-            </div>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -55,7 +55,7 @@ const ProtectedNavbar = () => {
             {/* User Profile */}
             <div className="flex items-center gap-2">
               <Link
-                to="/"
+                to="/profile"
                 className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
                   isActive('/profile')
                     ? 'bg-customprimary text-white'

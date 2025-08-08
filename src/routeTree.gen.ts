@@ -19,6 +19,7 @@ import { Route as AuthRequestPasswordResetRouteImport } from './routes/auth/requ
 import { Route as AuthAuthRegisterRouteImport } from './routes/auth/_auth.register'
 import { Route as AuthAuthLoginRouteImport } from './routes/auth/_auth.login'
 import { Route as ProtectedAuthPromptRouteImport } from './routes/_protected/_auth.prompt'
+import { Route as ProtectedAuthProfileRouteImport } from './routes/_protected/_auth.profile'
 import { Route as ProtectedAuthHistoryIndexRouteImport } from './routes/_protected/_auth.history/index'
 import { Route as ProtectedAuthHistorySummary_idRouteImport } from './routes/_protected/_auth.history/$summary_id'
 
@@ -69,6 +70,11 @@ const ProtectedAuthPromptRoute = ProtectedAuthPromptRouteImport.update({
   path: '/prompt',
   getParentRoute: () => ProtectedAuthRoute,
 } as any)
+const ProtectedAuthProfileRoute = ProtectedAuthProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => ProtectedAuthRoute,
+} as any)
 const ProtectedAuthHistoryIndexRoute =
   ProtectedAuthHistoryIndexRouteImport.update({
     id: '/history/',
@@ -85,6 +91,7 @@ const ProtectedAuthHistorySummary_idRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthAuthRouteWithChildren
+  '/profile': typeof ProtectedAuthProfileRoute
   '/prompt': typeof ProtectedAuthPromptRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthAuthRouteWithChildren
+  '/profile': typeof ProtectedAuthProfileRoute
   '/prompt': typeof ProtectedAuthPromptRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/_protected/_auth': typeof ProtectedAuthRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/auth/_auth': typeof AuthAuthRouteWithChildren
+  '/_protected/_auth/profile': typeof ProtectedAuthProfileRoute
   '/_protected/_auth/prompt': typeof ProtectedAuthPromptRoute
   '/auth/_auth/login': typeof AuthAuthLoginRoute
   '/auth/_auth/register': typeof AuthAuthRegisterRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/profile'
     | '/prompt'
     | '/auth/login'
     | '/auth/register'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/profile'
     | '/prompt'
     | '/auth/login'
     | '/auth/register'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/_protected/_auth'
     | '/auth'
     | '/auth/_auth'
+    | '/_protected/_auth/profile'
     | '/_protected/_auth/prompt'
     | '/auth/_auth/login'
     | '/auth/_auth/register'
@@ -227,6 +239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedAuthPromptRouteImport
       parentRoute: typeof ProtectedAuthRoute
     }
+    '/_protected/_auth/profile': {
+      id: '/_protected/_auth/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProtectedAuthProfileRouteImport
+      parentRoute: typeof ProtectedAuthRoute
+    }
     '/_protected/_auth/history/': {
       id: '/_protected/_auth/history/'
       path: '/history'
@@ -245,12 +264,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface ProtectedAuthRouteChildren {
+  ProtectedAuthProfileRoute: typeof ProtectedAuthProfileRoute
   ProtectedAuthPromptRoute: typeof ProtectedAuthPromptRoute
   ProtectedAuthHistorySummary_idRoute: typeof ProtectedAuthHistorySummary_idRoute
   ProtectedAuthHistoryIndexRoute: typeof ProtectedAuthHistoryIndexRoute
 }
 
 const ProtectedAuthRouteChildren: ProtectedAuthRouteChildren = {
+  ProtectedAuthProfileRoute: ProtectedAuthProfileRoute,
   ProtectedAuthPromptRoute: ProtectedAuthPromptRoute,
   ProtectedAuthHistorySummary_idRoute: ProtectedAuthHistorySummary_idRoute,
   ProtectedAuthHistoryIndexRoute: ProtectedAuthHistoryIndexRoute,
