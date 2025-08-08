@@ -151,7 +151,7 @@ function App() {
               </span>
             </div>
             <p className="text-gray-600 text-sm">
-              © 2025 TrendBits. Discover AI Trends with Intelligence.
+              © 2025 TrendBits. Discover Trends with Intelligence.
             </p>
           </div>
         </div>
