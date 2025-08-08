@@ -1,14 +1,15 @@
 import { z } from "zod";
 import { useForm } from "@tanstack/react-form";
-import { User, Mail, Settings, Shield, Edit3, Check, X } from "lucide-react";
+import { User, Mail, Settings, Shield, Edit3, Check, X, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useRouteContext } from "@tanstack/react-router";
+import { useRouteContext, useNavigate } from "@tanstack/react-router";
 
 import { RootLayout } from "../../components/Layouts";
 import { CustomButton, CustomInput } from "../../components/ui";
 import { requestResetPass, updateUsername } from "../../api/auth.api";
+import { clearToken } from "../../util/auth.util";
 
 // Zod schemas
 const usernameSchema = z.object({
@@ -63,6 +64,7 @@ interface ProfileProps {
 const Profile = ({ userProfile: propUserProfile, isLoading = false }: ProfileProps = {}) => {
   // Get user profile data from route context or props
   const routeContext = useRouteContext({ from: '/_protected/_auth/profile' as any });
+  const navigate = useNavigate();
   const userProfile = propUserProfile || routeContext?.userProfile;
 
   const [isEditingUsername, setIsEditingUsername] = useState(false);
@@ -191,6 +193,17 @@ const Profile = ({ userProfile: propUserProfile, isLoading = false }: ProfilePro
     e.stopPropagation();
     passwordResetForm.handleSubmit();
   };
+
+  // Logout function
+const handleLogout = () => {
+  try {
+    clearToken();
+    toast.success("Logged out successfully!");
+    navigate({ to: "/auth/login", replace: true });
+  } catch (error) {
+    toast.error("Error logging out");
+  }
+};
 
   // Skeleton Loader Component
   const ProfileSkeleton = () => (
@@ -490,7 +503,7 @@ const Profile = ({ userProfile: propUserProfile, isLoading = false }: ProfilePro
             <h2 className="text-xl font-semibold text-gray-900">Account Information</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div className="animate-slide-in-left">
               <h3 className="text-sm font-medium text-gray-700 mb-2">Account Status</h3>
               <div className="flex items-center gap-2">
@@ -509,6 +522,23 @@ const Profile = ({ userProfile: propUserProfile, isLoading = false }: ProfilePro
                   : 'July 2025'
                 }
               </span>
+            </div>
+          </div>
+
+          {/* Logout Button */}
+          <div className="border-t border-customprimary/20 pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm text-left font-medium text-gray-700 mb-1">Session Management</h3>
+                <p className="text-xs text-gray-500">Sign out of your account on this device</p>
+              </div>
+              <CustomButton
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </CustomButton>
             </div>
           </div>
         </div>
