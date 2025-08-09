@@ -1,6 +1,7 @@
 import axios, { type AxiosResponse, type InternalAxiosRequestConfig } from "axios";
 import { clearToken, getToken } from "./auth.util";
 import { handleApiError, handleApiResponse } from "./response.util";
+import { toast } from "sonner";
 
 export interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   addToken?: boolean;
@@ -32,6 +33,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       clearToken();
+      toast.error("Oops! You're not authenticated. Please log in.");
     }
 
     return Promise.reject(handleApiError(error));

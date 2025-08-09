@@ -10,6 +10,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "../../api/auth.api";
 import { toast } from "sonner";
+import ProtectedNavbar from "@/components/ui/ProtectedNavbar";
 
 // Zod schema for registration form
 const registerSchema = z.object({
@@ -65,110 +66,113 @@ const Register = () => {
   });
 
   return (
-    <RootLayout className="justify-center items-center flex">
-      {/* Registration Form */}
-      <form
-        className="flex flex-col items-center justify-center w-full max-w-xs px-6 sm:px-0 gap-5"
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-      >
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-5">
-          <img src={Logo} alt="TrendBits Logo" className="w-16 h-16" />
-          <h2 className="font-fredoka font-medium text-3xl">TrendBits</h2>
-        </div>
-
-        {/* Api Error Field */}
-        {registerMutation.isError && (
-          <div className="w-full bg-red-100 text-red-800 p-3 rounded-lg mb-2">
-            <p className="text-sm">{registerMutation.error.message}</p>
+    <RootLayout className="h-dvh flex flex-col">
+      <ProtectedNavbar/>
+      <div className="flex-1 flex justify-center items-center">
+        {/* Registration Form */}
+        <form
+          className="flex flex-col items-center justify-center w-full max-w-xs px-6 sm:px-0 gap-5"
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+        >
+          {/* Logo */}
+          <div className="flex flex-col items-center mb-5">
+            <img src={Logo} alt="TrendBits Logo" className="w-16 h-16" />
+            <h2 className="font-fredoka font-medium text-3xl">TrendBits</h2>
           </div>
-        )}
 
-        {/* Email Field */}
-        <form.Field
-          name="email"
-          validators={{
-            onChange: ({ value }) => {
-              const result = registerSchema.shape.email.safeParse(value);
-              return result.success ? undefined : result.error.errors[0]?.message;
-            },
-          }}
-          children={(field) => (
-            <CustomInput
-              type="email"
-              name={field.name}
-              placeholder="example@mail.com"
-              autoComplete="off"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              onBlur={field.handleBlur}
-              className="w-full"
-              leftIcon={<Mail size={18} />}
-              error={field.state.meta.isTouched && field.state.meta.errors.length > 0 ? field.state.meta.errors[0] : ""}
-            />
+          {/* Api Error Field */}
+          {registerMutation.isError && (
+            <div className="w-full bg-red-100 text-red-800 p-3 rounded-lg mb-2">
+              <p className="text-sm">{registerMutation.error.message}</p>
+            </div>
           )}
-        />
 
-        {/* Password Field */}
-        <form.Field
-          name="password"
-          validators={{
-            onChange: ({ value }) => {
-              const result = registerSchema.shape.password.safeParse(value);
-              return result.success ? undefined : result.error.errors[0]?.message;
-            },
-          }}
-          children={(field) => {
-            const requirements = checkPasswordRequirements(field.state.value);
-            const requirementsList = getRequirementsList(requirements);
+          {/* Email Field */}
+          <form.Field
+            name="email"
+            validators={{
+              onChange: ({ value }) => {
+                const result = registerSchema.shape.email.safeParse(value);
+                return result.success ? undefined : result.error.errors[0]?.message;
+              },
+            }}
+            children={(field) => (
+              <CustomInput
+                type="email"
+                name={field.name}
+                placeholder="example@mail.com"
+                autoComplete="off"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                className="w-full"
+                leftIcon={<Mail size={18} />}
+                error={field.state.meta.isTouched && field.state.meta.errors.length > 0 ? field.state.meta.errors[0] : ""}
+              />
+            )}
+          />
 
-            return (
-              <div className="w-full">
-                <CustomInput
-                  type={showPassword ? "text" : "password"}
-                  name={field.name}
-                  value={field.state.value}
-                  placeholder="Password"
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  className="w-full"
-                  leftIcon={<Lock size={18} />}
-                  rightIcon={
-                    <>{showPassword ? <EyeOff onClick={() => setShowPassword(!showPassword)} size={18} /> : <Eye onClick={() => setShowPassword(!showPassword)} size={18} />}</>
-                  }
-                />
+          {/* Password Field */}
+          <form.Field
+            name="password"
+            validators={{
+              onChange: ({ value }) => {
+                const result = registerSchema.shape.password.safeParse(value);
+                return result.success ? undefined : result.error.errors[0]?.message;
+              },
+            }}
+            children={(field) => {
+              const requirements = checkPasswordRequirements(field.state.value);
+              const requirementsList = getRequirementsList(requirements);
 
-                {/* Password Requirements */}
-                <div className="mt-3 space-y-1 flex flex-wrap gap-1.5">
-                  {requirementsList.map((requirement) => (
-                    <div key={requirement.key} className={`flex items-center gap-1 h-full px-1.5 py-1 rounded ${requirement.met ? "bg-green-100" : "bg-gray-100"}`}>
-                      {requirement.met ? <Check size={14} className="text-green-600" /> : <X size={14} className="text-gray-500" />}
-                      <span className={`text-xs font-medium ${requirement.met ? "text-green-600" : "text-gray-500"}`}>{requirement.label}</span>
-                    </div>
-                  ))}
+              return (
+                <div className="w-full">
+                  <CustomInput
+                    type={showPassword ? "text" : "password"}
+                    name={field.name}
+                    value={field.state.value}
+                    placeholder="Password"
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                    className="w-full"
+                    leftIcon={<Lock size={18} />}
+                    rightIcon={
+                      <>{showPassword ? <EyeOff onClick={() => setShowPassword(!showPassword)} size={18} /> : <Eye onClick={() => setShowPassword(!showPassword)} size={18} />}</>
+                    }
+                  />
+
+                  {/* Password Requirements */}
+                  <div className="mt-3 space-y-1 flex flex-wrap gap-1.5">
+                    {requirementsList.map((requirement) => (
+                      <div key={requirement.key} className={`flex items-center gap-1 h-full px-1.5 py-1 rounded ${requirement.met ? "bg-green-100" : "bg-gray-100"}`}>
+                        {requirement.met ? <Check size={14} className="text-green-600" /> : <X size={14} className="text-gray-500" />}
+                        <span className={`text-xs font-medium ${requirement.met ? "text-green-600" : "text-gray-500"}`}>{requirement.label}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
-          }}
-        />
+              );
+            }}
+          />
 
-        {/* Submit CustomButton */}
-        <CustomButton type="submit" className="w-full" disabled={!form.state.isValid || registerMutation.isPending}>
-          {registerMutation.isPending ? "Creating Account..." : "Register an account"}
-        </CustomButton>
+          {/* Submit CustomButton */}
+          <CustomButton type="submit" className="w-full" disabled={!form.state.isValid || registerMutation.isPending}>
+            {registerMutation.isPending ? "Creating Account..." : "Register an account"}
+          </CustomButton>
 
-        {/* Bottom text */}
-        <p className="text-center text-sm text-gray-400">
-          Have an account?{" "}
-          <Link to="/auth/login" className="text-customprimary hover:underline hover:text-primaryDark font-bold">
-            Login
-          </Link>
-        </p>
-      </form>
+          {/* Bottom text */}
+          <p className="text-center text-sm text-gray-400">
+            Have an account?{" "}
+            <Link to="/auth/login" className="text-customprimary hover:underline hover:text-primaryDark font-bold">
+              Login
+            </Link>
+          </p>
+        </form>
+      </div>
     </RootLayout>
   );
 };

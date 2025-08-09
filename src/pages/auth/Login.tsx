@@ -11,6 +11,7 @@ import { loginUser } from "../../api/auth.api";
 import { setToken } from "../../util/auth.util";
 import { loginSchema, type LoginFormData } from "../../schemas/auth.schema";
 import { toast } from "sonner";
+import ProtectedNavbar from "@/components/ui/ProtectedNavbar";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -41,99 +42,102 @@ const Login = () => {
   });
 
   return (
-    <RootLayout className="justify-center items-center flex">
-      {/* Login Form */}
-      <form
-        className="flex flex-col items-center justify-center w-full max-w-xs px-8 sm:px-6 md:px-0 gap-5"
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-      >
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-5">
-          <img src={Logo} alt="TrendBits Logo" className="w-16 h-16" />
-          <h2 className="font-fredoka font-medium text-3xl">TrendBits</h2>
-        </div>
-
-        {/* Api Error Field */}
-        {loginMutation.isError && (
-          <div className="w-full bg-red-100 text-red-800 p-3 rounded-lg mb-2">
-            <p className="text-sm">{loginMutation.error.message}</p>
+    <RootLayout className="h-dvh flex flex-col">
+      <ProtectedNavbar/>
+      <div className="flex-1 flex justify-center items-center">
+        {/* Login Form */}
+        <form
+          className="flex flex-col items-center justify-center w-full max-w-xs px-8 sm:px-6 md:px-0 gap-5"
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+        >
+          {/* Logo */}
+          <div className="flex flex-col items-center mb-5">
+            <img src={Logo} alt="TrendBits Logo" className="w-16 h-16" />
+            <h2 className="font-fredoka font-medium text-3xl">TrendBits</h2>
           </div>
-        )}
 
-        {/* Form Fields */}
-        <form.Field
-          name="email"
-          validators={{
-            onChange: ({ value }) => {
-              const result = loginSchema.shape.email.safeParse(value);
-              return result.success ? undefined : result.error.errors[0]?.message;
-            },
-          }}
-          children={(field) => (
-            <CustomInput
-              type="email"
-              name={field.name}
-              placeholder="example@mail.com"
-              autoComplete="off"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              onBlur={field.handleBlur}
-              className="w-full"
-              leftIcon={<Mail size={18} />}
-              error={field.state.meta.isTouched && field.state.meta.errors.length > 0 ? field.state.meta.errors[0] : ""}
-            />
+          {/* Api Error Field */}
+          {loginMutation.isError && (
+            <div className="w-full bg-red-100 text-red-800 p-3 rounded-lg mb-2">
+              <p className="text-sm">{loginMutation.error.message}</p>
+            </div>
           )}
-        />
-        <form.Field
-          name="password"
-          validators={{
-            onChange: ({ value }) => {
-              const result = loginSchema.shape.password.safeParse(value);
-              return result.success ? undefined : result.error.errors[0]?.message;
-            },
-          }}
-          children={(field) => (
-            <CustomInput
-              type={showPassword ? "text" : "password"}
-              name={field.name}
-              value={field.state.value}
-              placeholder="Password"
-              onChange={(e) => field.handleChange(e.target.value)}
-              onBlur={field.handleBlur}
-              className="w-full"
-              leftIcon={<Lock size={18} />}
-              rightIcon={
-                <>{showPassword ? <EyeOff onClick={() => setShowPassword(!showPassword)} size={18} /> : <Eye onClick={() => setShowPassword(!showPassword)} size={18} />}</>
-              }
-              error={field.state.meta.isTouched && field.state.meta.errors.length > 0 ? field.state.meta.errors[0] : ""}
-            />
-          )}
-        />
 
-        {/* Forgot Password */}
-        <div className="flex justify-end w-full">
-          <Link to="/auth/request-password/reset" className="text-customprimary hover:underline hover:text-primaryDark font-medium text-sm">
-            Forgot Password?
-          </Link>
-        </div>
+          {/* Form Fields */}
+          <form.Field
+            name="email"
+            validators={{
+              onChange: ({ value }) => {
+                const result = loginSchema.shape.email.safeParse(value);
+                return result.success ? undefined : result.error.errors[0]?.message;
+              },
+            }}
+            children={(field) => (
+              <CustomInput
+                type="email"
+                name={field.name}
+                placeholder="example@mail.com"
+                autoComplete="off"
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                className="w-full"
+                leftIcon={<Mail size={18} />}
+                error={field.state.meta.isTouched && field.state.meta.errors.length > 0 ? field.state.meta.errors[0] : ""}
+              />
+            )}
+          />
+          <form.Field
+            name="password"
+            validators={{
+              onChange: ({ value }) => {
+                const result = loginSchema.shape.password.safeParse(value);
+                return result.success ? undefined : result.error.errors[0]?.message;
+              },
+            }}
+            children={(field) => (
+              <CustomInput
+                type={showPassword ? "text" : "password"}
+                name={field.name}
+                value={field.state.value}
+                placeholder="Password"
+                onChange={(e) => field.handleChange(e.target.value)}
+                onBlur={field.handleBlur}
+                className="w-full"
+                leftIcon={<Lock size={18} />}
+                rightIcon={
+                  <>{showPassword ? <EyeOff onClick={() => setShowPassword(!showPassword)} size={18} /> : <Eye onClick={() => setShowPassword(!showPassword)} size={18} />}</>
+                }
+                error={field.state.meta.isTouched && field.state.meta.errors.length > 0 ? field.state.meta.errors[0] : ""}
+              />
+            )}
+          />
 
-        {/* Submit Button */}
-        <CustomButton type="submit" className="w-full" disabled={!form.state.isValid || loginMutation.isPending}>
-          {loginMutation.isPending ? "Logging In..." : "Login your account"}
-        </CustomButton>
+          {/* Forgot Password */}
+          <div className="flex justify-end w-full">
+            <Link to="/auth/request-password/reset" className="text-customprimary hover:underline hover:text-primaryDark font-medium text-sm">
+              Forgot Password?
+            </Link>
+          </div>
 
-        {/* Bottom text */}
-        <p className="text-center text-sm text-gray-400">
-          Don't have an account?{" "}
-          <Link to="/auth/register" className="text-customprimary hover:underline hover:text-primaryDark font-bold">
-            Register
-          </Link>
-        </p>
-      </form>
+          {/* Submit Button */}
+          <CustomButton type="submit" className="w-full" disabled={!form.state.isValid || loginMutation.isPending}>
+            {loginMutation.isPending ? "Logging In..." : "Login your account"}
+          </CustomButton>
+
+          {/* Bottom text */}
+          <p className="text-center text-sm text-gray-400">
+            Don't have an account?{" "}
+            <Link to="/auth/register" className="text-customprimary hover:underline hover:text-primaryDark font-bold">
+              Register
+            </Link>
+          </p>
+        </form>
+      </div>
     </RootLayout>
   );
 };

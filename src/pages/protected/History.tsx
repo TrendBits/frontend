@@ -18,6 +18,17 @@ interface HistoryItem {
   updated_at: string;
 }
 
+// Update the parseInlineMarkdown function to handle headings as bold text
+const parseInlineMarkdown = (text: string) => {
+  return text
+    .replace(/^### (.*$)/gm, '<strong>$1</strong>') // Convert h3 to bold
+    .replace(/^## (.*$)/gm, '<strong>$1</strong>')  // Convert h2 to bold
+    .replace(/^# (.*$)/gm, '<strong>$1</strong>')   // Convert h1 to bold
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold with **
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')             // Italic with *
+    .replace(/`(.*?)`/g, '<code class="bg-gray-100 px-1 rounded text-xs">$1</code>'); // Code
+};
+
 const History = () => {
   const navigate = useNavigate();
   const search = useSearch({ from: '/_protected/_auth/history/' });
@@ -29,8 +40,8 @@ const History = () => {
   const { data: historyData, isLoading, error } = useQuery({
     queryKey: ['promptHistory', page, limit, q],
     queryFn: () => getPromptHistoryList({ page, limit, q }),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 5 * 60 * 1000, // 5 mins
+    gcTime: 10 * 60 * 1000, // 10 mins
   });
 
   // Update data extraction to match API structure
@@ -67,20 +78,26 @@ const History = () => {
     toast.error("Failed to load history. Please try again.");
   }
 
+  // Add this helper function at the top of the component
+  const getTruncatedSummary = (summary: string, isMobile: boolean = false) => {
+    const limit = isMobile ? 150 : 300;
+    return summary.length > limit ? `${summary.substring(0, limit)}...` : summary;
+  };
+
   return (
     <RootLayout className="bg-mainBg">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Clock className="w-8 h-8 text-customprimary" />
-            <h1 className="text-3xl font-bold text-gray-800 font-fredoka">Prompt History</h1>
+          <div className="flex items-center gap-3">
+            <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-customprimary" />
+            <h1 className="sm:text-3xl text-2xl sm:font-bold font-semibold text-gray-800 font-fredoka">Prompt History</h1>
           </div>
         </div>
 
         {/* Search and Filter Section */}
         <div className="w-full bg-mainBg shadow-md rounded-xl border border-customprimary mb-6">
-          <form onSubmit={handleSearch} className="bg-transparent flex items-center p-4 rounded-lg gap-3">
+          <form onSubmit={handleSearch} className="bg-transparent flex items-center p-2 sm:p-4 rounded-lg gap-3">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
@@ -123,76 +140,86 @@ const History = () => {
           ) : historyItems.length > 0 ? (
             // History Items
             historyItems.map((item) => (
-              <div key={item.id} className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 hover:border-customprimary hover:shadow-lg hover:bg-secondaryBg transition-all p-6 group">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <FileText className="w-5 h-5 text-customprimary" />
-                      <h3 className="font-semibold text-gray-800 group-hover:text-primaryDark transition-colors">
-                        {item.headline}
-                      </h3>
+              <Link
+                key={item.id}
+                to="/history/$summary_id"
+                params={{ summary_id: item.id }}
+                className="block"
+              >
+                <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 hover:border-customprimary hover:shadow-lg hover:bg-secondaryBg transition-all p-4 sm:p-6 group cursor-pointer">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-2">
+                        <FileText className="w-5 h-5 text-customprimary" />
+                        <h3 className="font-semibold text-gray-800 group-hover:text-primaryDark transition-colors">
+                          {item.headline}
+                        </h3>
+                      </div>
+                        <p className="text-sm text-gray-500 flex items-center gap-2 mb-2">
+                        <Clock className="w-4 h-4" />
+                        {formatDate(item.created_at)}
+                      </p>
+                      <p className="text-xs text-gray-400 mb-3">
+                        Search: {item.search_term.length > 80 ? `${item.search_term.substring(0, 80)}...` : item.search_term}
+                      </p>
                     </div>
-                      <p className="text-sm text-gray-500 flex items-center gap-2 mb-2">
-                      <Clock className="w-4 h-4" />
-                      {formatDate(item.created_at)}
-                    </p>
-                    <p className="text-xs text-gray-400 mb-3">
-                      Search: {item.search_term.length > 80 ? `${item.search_term.substring(0, 80)}...` : item.search_term}
-                    </p>
                   </div>
-                </div>
-                
-                <div className="bg-lightGray/80 backdrop-blur-sm rounded-lg p-4 mb-4 border border-customprimary/15">
-                  <p className="text-sm text-gray-700 leading-relaxed mb-3">
-                    {item.summary.length > 300 ? `${item.summary.substring(0, 300)}...` : item.summary}
-                  </p>
                   
-                  {item.key_points && item.key_points.length > 0 && (
-                    <div className="mb-3">
-                      <h4 className="text-xs font-semibold text-gray-600 mb-2">Key Points:</h4>
-                      <ul className="text-xs text-gray-600 space-y-1">
-                        {item.key_points.slice(0, 3).map((point, index) => (
-                          <li key={index} className="flex items-start gap-2">
-                            <span className="w-1 h-1 bg-customprimary rounded-full mt-2 flex-shrink-0"></span>
-                            <span>{point.length > 100 ? `${point.substring(0, 100)}...` : point}</span>
-                          </li>
-                        ))}
-                        {item.key_points.length > 3 && (
-                          <li className="text-customprimary font-medium">+{item.key_points.length - 3} more points</li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
+                  <div className="bg-lightGray/80 backdrop-blur-sm rounded-lg p-4 mb-4 border border-customprimary/15">
+                    <div className="text-xs sm:text-sm text-gray-700 leading-relaxed mb-3 break-words overflow-hidden"
+                      dangerouslySetInnerHTML={{ 
+                        __html: parseInlineMarkdown(
+                          getTruncatedSummary(item.summary, true)
+                        ) 
+                      }}
+                    />
+                    
+                    {item.key_points && item.key_points.length > 0 && (
+                      <div className="mb-3">
+                        <h4 className="text-xs font-semibold text-gray-600 mb-2">Key Points:</h4>
+                        <ul className="text-xs text-gray-600 space-y-1">
+                          {item.key_points.slice(0, 3).map((point, index) => (
+                            <li key={index} className="flex items-start gap-2">
+                              <span className="w-1 h-1 bg-customprimary rounded-full mt-2 flex-shrink-0"></span>
+                              <span>{point.length > 100 ? `${point.substring(0, 85)}...` : point}</span>
+                            </li>
+                          ))}
+                          {item.key_points.length > 3 && (
+                            <li className="text-customprimary font-medium">+{item.key_points.length - 3} more points</li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {item.call_to_action && (
+                      <div className="bg-customprimary/20 backdrop-blur-sm rounded p-2 mt-3 border border-customprimary/30">
+                        <p className="text-xs text-customprimary font-medium">{item.call_to_action}</p>
+                      </div>
+                    )}
+                  </div>
                   
-                  {item.call_to_action && (
-                    <div className="bg-customprimary/20 backdrop-blur-sm rounded p-2 mt-3 border border-customprimary/30">
-                      <p className="text-xs text-customprimary font-medium">{item.call_to_action}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
+                      <div className="text-xs text-gray-400">
+                        ID: {item.id.split('-')[0]}...
+                      </div>
+                      <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-3">
+                        <span className="text-customprimary hover:text-primaryDark font-medium text-sm transition-colors">
+                          View Details →
+                        </span>
+                        <Link
+                          to="/prompt"
+                          search={{ prompt: item.search_term }}
+                          className="text-gray-600 hover:text-customprimary font-medium text-sm transition-colors"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Use Search Term →
+                        </Link>
+                      </div>
                     </div>
-                  )}
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="text-xs text-gray-400">
-                    ID: {item.id.split('-')[0]}...
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Link
-                      to="/history/$summary_id"
-                      params={{ summary_id: item.id }}
-                      className="text-customprimary hover:text-primaryDark font-medium text-sm transition-colors"
-                    >
-                      View Details →
-                    </Link>
-                    <Link
-                      to="/prompt"
-                      search={{ prompt: item.search_term }}
-                      className="text-gray-600 hover:text-customprimary font-medium text-sm transition-colors"
-                    >
-                      Use Search Term →
-                    </Link>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           ) : (
             // Empty State
@@ -251,28 +278,28 @@ const History = () => {
               )}
             </div>
             
-            {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-1 sm:gap-2 px-4 overflow-x-auto">
                 <button
                   onClick={() => handlePageChange(page - 1)}
                   disabled={page <= 1}
-                  className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-primaryDark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 text-gray-600 hover:text-primaryDark disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm sm:text-base flex-shrink-0"
                 >
                   <ChevronLeft className="w-4 h-4" />
-                  Previous
+                  <span className="hidden sm:inline">Previous</span>
                 </button>
                 
                 <div className="flex items-center gap-1">
-                  {[...Array(Math.min(5, totalPages))].map((_, i) => {
-                    const pageNum = Math.max(1, Math.min(totalPages - 4, page - 2)) + i;
+                  {[...Array(Math.min(window.innerWidth < 640 ? 3 : 5, totalPages))].map((_, i) => {
+                    const maxVisible = window.innerWidth < 640 ? 3 : 5;
+                    const pageNum = Math.max(1, Math.min(totalPages - (maxVisible - 1), page - Math.floor(maxVisible / 2))) + i;
                     if (pageNum > totalPages) return null;
                     
                     return (
                       <button
                         key={pageNum}
                         onClick={() => handlePageChange(pageNum)}
-                        className={`w-10 h-10 rounded-lg font-medium transition-colors ${
+                        className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg font-medium transition-colors text-sm sm:text-base flex-shrink-0 ${
                           pageNum === page
                             ? 'bg-customprimary text-white'
                             : 'text-gray-600 hover:bg-secondaryBg hover:text-primaryDark'
@@ -287,9 +314,9 @@ const History = () => {
                 <button
                   onClick={() => handlePageChange(page + 1)}
                   disabled={page >= totalPages}
-                  className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-primaryDark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 text-gray-600 hover:text-primaryDark disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm sm:text-base flex-shrink-0"
                 >
-                  Next
+                  <span className="hidden sm:inline">Next</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>

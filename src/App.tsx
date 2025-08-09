@@ -2,43 +2,13 @@ import { ArrowRight, TrendingUp, Zap, Users } from 'lucide-react';
 import Logo from './assets/logo.png';
 import './App.css';
 import { Link } from '@tanstack/react-router';
+import ProtectedNavbar from './components/ui/ProtectedNavbar';
 
 function App() {
   return (
-    <div className="min-w-dvw min-h-dvh bg-mainBg">
-      {/* Header */}
-      <header className="bg-mainBg border-b border-customprimary/20 fixed top-0 left-0 right-0 z-50 backdrop-blur-sm bg-mainBg/95">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-           <div className="flex items-center gap-3 animate-fade-in-left">
-            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <img src={Logo} alt="TrendBits Logo" className="w-8 h-8" />
-              <div className="hidden sm:block">
-                <h1 className="font-fredoka font-semibold text-xl text-primaryDark">
-                  TrendBits
-                </h1>
-                <p className="text-xs text-gray-600 -mt-1">Discover AI Trends</p>
-              </div>
-            </Link>
-          </div>
-
-            <div className="flex items-center gap-4 animate-fade-in-right">
-              <a 
-                href="/auth/login" 
-                className="text-gray-700 hover:text-primaryDark transition-colors font-medium"
-              >
-                Login
-              </a>
-              <a 
-                href="/auth/register" 
-                className="bg-customprimary text-white px-4 py-2 rounded-lg hover:bg-primaryDark transition-colors font-medium"
-              >
-                Get Started
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-w-dvw min-h-dvh bg-mainBg p-0 m-0">
+      {/* Navbar */}
+      <ProtectedNavbar/>
 
       {/* Hero Section - Reduced Height with Animations */}
       <main className="pt-16">
@@ -52,19 +22,13 @@ function App() {
               Get AI-powered summaries of trending topics across any field. 
               Stay ahead with intelligent insights and comprehensive analysis.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up-delay">
+            <div className="flex justify-center animate-fade-in-up-delay">
               <Link
                 to="/prompt" 
-                className="bg-customprimary text-white px-8 py-4 rounded-lg hover:bg-primaryDark transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium flex items-center justify-center gap-2 text-lg group"
+                className="bg-customprimary text-white px-12 py-5 rounded-xl hover:bg-primaryDark transition-all duration-300 hover:scale-105 hover:shadow-xl font-semibold flex items-center justify-center gap-3 text-xl group shadow-lg"
               >
                 Start Exploring 
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link 
-                to="/history" 
-                className="border-2 border-customprimary text-customprimary px-8 py-4 rounded-lg hover:bg-customprimary hover:text-white transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium text-lg"
-              >
-                View Examples
+                <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>
