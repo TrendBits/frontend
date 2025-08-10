@@ -18,6 +18,7 @@ import { Route as AuthRequestPasswordVerifyRouteImport } from './routes/auth/req
 import { Route as AuthRequestPasswordResetRouteImport } from './routes/auth/request-password/reset'
 import { Route as AuthAuthRegisterRouteImport } from './routes/auth/_auth.register'
 import { Route as AuthAuthLoginRouteImport } from './routes/auth/_auth.login'
+import { Route as ProtectedAuthSummaryRouteImport } from './routes/_protected/_auth.summary'
 import { Route as ProtectedAuthPromptRouteImport } from './routes/_protected/_auth.prompt'
 import { Route as ProtectedAuthProfileRouteImport } from './routes/_protected/_auth.profile'
 import { Route as ProtectedAuthHistoryIndexRouteImport } from './routes/_protected/_auth.history/index'
@@ -65,6 +66,11 @@ const AuthAuthLoginRoute = AuthAuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthAuthRoute,
 } as any)
+const ProtectedAuthSummaryRoute = ProtectedAuthSummaryRouteImport.update({
+  id: '/summary',
+  path: '/summary',
+  getParentRoute: () => ProtectedAuthRoute,
+} as any)
 const ProtectedAuthPromptRoute = ProtectedAuthPromptRouteImport.update({
   id: '/prompt',
   path: '/prompt',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthAuthRouteWithChildren
   '/profile': typeof ProtectedAuthProfileRoute
   '/prompt': typeof ProtectedAuthPromptRoute
+  '/summary': typeof ProtectedAuthSummaryRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
   '/auth/request-password/reset': typeof AuthRequestPasswordResetRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthAuthRouteWithChildren
   '/profile': typeof ProtectedAuthProfileRoute
   '/prompt': typeof ProtectedAuthPromptRoute
+  '/summary': typeof ProtectedAuthSummaryRoute
   '/auth/login': typeof AuthAuthLoginRoute
   '/auth/register': typeof AuthAuthRegisterRoute
   '/auth/request-password/reset': typeof AuthRequestPasswordResetRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/auth/_auth': typeof AuthAuthRouteWithChildren
   '/_protected/_auth/profile': typeof ProtectedAuthProfileRoute
   '/_protected/_auth/prompt': typeof ProtectedAuthPromptRoute
+  '/_protected/_auth/summary': typeof ProtectedAuthSummaryRoute
   '/auth/_auth/login': typeof AuthAuthLoginRoute
   '/auth/_auth/register': typeof AuthAuthRegisterRoute
   '/auth/request-password/reset': typeof AuthRequestPasswordResetRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/profile'
     | '/prompt'
+    | '/summary'
     | '/auth/login'
     | '/auth/register'
     | '/auth/request-password/reset'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/profile'
     | '/prompt'
+    | '/summary'
     | '/auth/login'
     | '/auth/register'
     | '/auth/request-password/reset'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/auth/_auth'
     | '/_protected/_auth/profile'
     | '/_protected/_auth/prompt'
+    | '/_protected/_auth/summary'
     | '/auth/_auth/login'
     | '/auth/_auth/register'
     | '/auth/request-password/reset'
@@ -232,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAuthLoginRouteImport
       parentRoute: typeof AuthAuthRoute
     }
+    '/_protected/_auth/summary': {
+      id: '/_protected/_auth/summary'
+      path: '/summary'
+      fullPath: '/summary'
+      preLoaderRoute: typeof ProtectedAuthSummaryRouteImport
+      parentRoute: typeof ProtectedAuthRoute
+    }
     '/_protected/_auth/prompt': {
       id: '/_protected/_auth/prompt'
       path: '/prompt'
@@ -266,6 +285,7 @@ declare module '@tanstack/react-router' {
 interface ProtectedAuthRouteChildren {
   ProtectedAuthProfileRoute: typeof ProtectedAuthProfileRoute
   ProtectedAuthPromptRoute: typeof ProtectedAuthPromptRoute
+  ProtectedAuthSummaryRoute: typeof ProtectedAuthSummaryRoute
   ProtectedAuthHistorySummary_idRoute: typeof ProtectedAuthHistorySummary_idRoute
   ProtectedAuthHistoryIndexRoute: typeof ProtectedAuthHistoryIndexRoute
 }
@@ -273,6 +293,7 @@ interface ProtectedAuthRouteChildren {
 const ProtectedAuthRouteChildren: ProtectedAuthRouteChildren = {
   ProtectedAuthProfileRoute: ProtectedAuthProfileRoute,
   ProtectedAuthPromptRoute: ProtectedAuthPromptRoute,
+  ProtectedAuthSummaryRoute: ProtectedAuthSummaryRoute,
   ProtectedAuthHistorySummary_idRoute: ProtectedAuthHistorySummary_idRoute,
   ProtectedAuthHistoryIndexRoute: ProtectedAuthHistoryIndexRoute,
 }

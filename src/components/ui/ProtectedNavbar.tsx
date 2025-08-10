@@ -2,19 +2,20 @@ import { User, Menu } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import Logo from "@/assets/logo.png";
-import { getToken } from "@/util/auth.util";
+import { getAuthState } from "@/util/auth.util";
 
 const ProtectedNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const isAuthenticated = getToken() !== null;
+  const authState = getAuthState();
+  const isAuthenticated = authState === 'authenticated';
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <nav className="bg-mainBg border-b border-customprimary shadow-sm sticky top-0 z-50 w-full min-w-vw">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex items-center justify-between h-16">
           {/* Logo/Brand Section */}
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
@@ -28,136 +29,159 @@ const ProtectedNavbar = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation - Only show if authenticated */}
-          {isAuthenticated && (
-            <div className="hidden md:flex items-center gap-3">
-              <Link
-                to="/prompt"
-                className={`transition-colors font-medium text-sm px-3 py-2 rounded-md ${
-                  isActive('/prompt')
-                    ? 'text-white bg-customprimary'
-                    : 'text-gray-700 hover:text-primaryDark hover:bg-secondaryBg'
-                }`}
-              >
-                Prompts
-              </Link>
+          {/* Centered Navigation Links - Desktop */}
+          <div className="hidden md:flex items-center gap-3 flex-1 justify-center">
+            {/* Always show Prompt link */}
+            <Link
+              to="/prompt"
+              className={`transition-colors font-medium text-sm px-3 py-2 rounded-md ${
+                isActive('/prompt')
+                  ? 'text-white bg-customprimary'
+                  : 'text-gray-700 hover:text-customprimary hover:bg-customprimary/10'
+              }`}
+            >
+              Prompts
+            </Link>
+
+            {/* Show History only for authenticated users */}
+            {isAuthenticated && (
               <Link
                 to="/history"
                 className={`transition-colors font-medium text-sm px-3 py-2 rounded-md ${
                   isActive('/history')
                     ? 'text-white bg-customprimary'
-                    : 'text-gray-700 hover:text-primaryDark hover:bg-secondaryBg'
+                    : 'text-gray-700 hover:text-customprimary hover:bg-customprimary/10'
                 }`}
               >
                 History
               </Link>
-            </div>
-          )}
+            )}
+          </div>
 
-          {/* Right Section - Actions */}
-          <div className="flex items-center gap-3">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Authentication Actions */}
             {isAuthenticated ? (
-              /* User Profile - Show when authenticated */
+              <Link
+                to="/profile"
+                className={`transition-colors font-medium text-sm px-3 py-2 rounded-md flex items-center gap-2 ${
+                  isActive('/profile')
+                    ? 'text-white bg-customprimary'
+                    : 'text-gray-700 hover:text-customprimary hover:bg-customprimary/10'
+                }`}
+              >
+                <User className="w-4 h-4" />
+                Profile
+              </Link>
+            ) : (
               <div className="flex items-center gap-2">
                 <Link
-                  to="/profile"
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
-                    isActive('/profile')
-                      ? 'bg-customprimary text-white'
-                      : 'text-gray-700 hover:text-primaryDark hover:bg-secondaryBg'
-                  }`}
-                >
-                  <div className={`p-1.5 rounded-full ${
-                    isActive('/profile') 
-                      ? 'bg-white text-customprimary' 
-                      : 'bg-customprimary text-white'
-                    }`}>
-                    <User size={14} className={`${
-                      isActive('/profile') ? 'text-customprimary' : 'text-white'
-                    }`} />
-                  </div>
-                  <span className="hidden sm:block font-medium text-sm">
-                    Profile
-                  </span>
-                </Link>
-              </div>
-            ) : (
-              /* Login/Register buttons - Show when unauthenticated */
-              <div className="flex items-center gap-4">
-                <Link
-                  to="/auth/login" 
-                  className="text-gray-700 hover:text-primaryDark transition-colors font-medium"
+                  to="/auth/login"
+                  className="text-sm font-medium text-gray-700 hover:text-customprimary px-3 py-2 rounded-md transition-colors"
                 >
                   Login
                 </Link>
                 <Link
-                  to="/auth/register" 
-                  className="bg-customprimary text-white px-4 py-2 rounded-lg hover:bg-primaryDark transition-colors font-medium"
+                  to="/auth/register"
+                  className="text-sm font-medium bg-customprimary text-white px-4 py-2 rounded-md hover:bg-primaryDark transition-colors"
                 >
                   Get Started
                 </Link>
               </div>
             )}
+          </div>
 
-            {/* Mobile Menu Button */}
-            <button 
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-gray-600 hover:text-primaryDark hover:bg-secondaryBg rounded-lg transition-all"
+              className="text-gray-700 hover:text-customprimary p-2 rounded-md transition-colors"
             >
               <Menu className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Navigation Menu */}
         {isMenuOpen && (
           <div className="md:hidden border-t border-customprimary bg-secondaryBg">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {isAuthenticated ? (
-                /* Authenticated mobile menu */
-                <>
-                  <Link
-                    to="/prompt"
-                    className={`block w-full text-left px-3 py-2 rounded-md transition-colors font-medium text-sm ${
-                      isActive('/prompt')
-                        ? 'text-white bg-customprimary'
-                        : 'text-gray-700 hover:text-primaryDark hover:bg-mainBg'
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Prompt
-                  </Link>
-                  <Link
-                    to="/history"
-                    className={`block w-full text-left px-3 py-2 rounded-md transition-colors font-medium text-sm ${
-                      isActive('/history')
-                        ? 'text-white bg-customprimary'
-                        : 'text-gray-700 hover:text-primaryDark hover:bg-mainBg'
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    History
-                  </Link>
-                </>
-              ) : (
-                /* Unauthenticated mobile menu */
-                <>
-                  <Link
-                    to="/auth/login"
-                    className="block w-full text-left px-3 py-2 rounded-md transition-colors font-medium text-sm text-gray-700 hover:text-primaryDark hover:bg-mainBg"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/auth/register"
-                    className="block w-full text-left px-3 py-2 rounded-md transition-colors font-medium text-sm bg-customprimary text-white hover:bg-primaryDark"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Get Started
-                  </Link>
-                </>
-              )}
+            <div className="px-3 p-6 space-y-3">
+              <div className="space-y-3">
+                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3">Navigation</div>
+                   <Link
+                  to="/prompt"
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive('/prompt')
+                      ? 'text-white bg-customprimary shadow-md'
+                      : 'text-gray-700 bg-gray-50 hover:bg-customprimary/10 hover:text-customprimary border border-gray-200 hover:border-customprimary/30'
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <div className={`w-2 h-2 rounded-full ${
+                    isActive('/prompt') ? 'bg-white' : 'bg-customprimary'
+                  }`} />
+                  Prompts
+                </Link>
+                  {isAuthenticated && (
+                    <Link
+                      to="/history"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        isActive('/history')
+                          ? 'text-white bg-customprimary shadow-md'
+                          : 'text-gray-700 bg-gray-50 hover:bg-customprimary/10 hover:text-customprimary border border-gray-200 hover:border-customprimary/30'
+                      }`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <div className={`w-2 h-2 rounded-full ${
+                        isActive('/history') ? 'bg-white' : 'bg-customprimary'
+                      }`} />
+                      History
+                    </Link>
+                  )}
+              </div>
+
+              {/* Authentication Section */}
+              <div className="border-t border-gray-100 pt-6">
+                {isAuthenticated ? (
+                  <div className="space-y-3">
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3">
+                      Account
+                    </div>
+                    <Link
+                      to="/profile"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        isActive('/profile')
+                          ? 'text-white bg-customprimary shadow-md'
+                          : 'text-gray-700 hover:text-customprimary hover:bg-customprimary/10'
+                      }`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <User className="w-4 h-4" />
+                      Profile
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3">Get Started</div>
+                    <div className="space-y-2">
+                      <Link
+                        to="/auth/login"
+                        className="block w-full text-center px-4 py-3 text-sm font-medium text-gray-700 hover:text-customprimary border border-gray-200 rounded-lg hover:border-customprimary transition-all duration-200"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        to="/auth/register"
+                        className="block w-full text-center px-4 py-3 text-sm font-medium bg-customprimary text-white rounded-lg hover:bg-primaryDark transition-all duration-200 shadow-md hover:shadow-lg"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Get Started
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

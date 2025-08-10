@@ -1,8 +1,19 @@
 import api, { type CustomAxiosRequestConfig } from "../util/api.util";
+import type { SummaryResponse } from "./api.types";
+import { getAuthState } from "../util/auth.util";
 
-export const generateSummary = async (prompt:string) => {
-  return await api.post(`prompt/summary`, { prompt }, { addToken: true } as CustomAxiosRequestConfig);
-}
+export const generateSummary = async (prompt: string): Promise<{ data: SummaryResponse }> => {
+  const authState = getAuthState();
+  const isAuthenticated = authState === 'authenticated';
+  
+  const config: CustomAxiosRequestConfig = {
+    addToken: isAuthenticated,
+    allowGuest: !isAuthenticated,
+    headers: {}
+  };
+  
+  return await api.post(`prompt/summary`, { prompt }, config);
+};
 
 export const getPromptHistoryList = async (options?: {
   id?: string;
@@ -19,8 +30,8 @@ export const getPromptHistoryList = async (options?: {
   return await api.get(`prompt/history${params.toString() ? `?${params.toString()}` : ''}`, 
     { addToken: true } as CustomAxiosRequestConfig
   );
-}
+};
 
 export const getPromptHistoryDetail = async (id: string) => {
   return await api.get(`prompt/history/${id}`, { addToken: true } as CustomAxiosRequestConfig);
-}
+};

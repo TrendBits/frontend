@@ -1,31 +1,13 @@
-import { ArrowLeft, Clock, FileText, Lightbulb, Target, Copy, Download } from "lucide-react";
+import { ArrowLeft, Clock, FileText, Lightbulb, Target, Copy, Download, Share2, UserPlus, AlertCircle } from "lucide-react";
 import { RootLayout } from "../../components/Layouts";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useState } from "react";
-
-// Update the interface to include article_references
-interface ArticleReference {
-  title: string;
-  url: string;
-  source: string;
-  date: string;
-}
-
-interface SummaryData {
-  id: string;
-  search_term: string;
-  headline: string;
-  summary: string;
-  key_points: string[];
-  article_references: ArticleReference[];
-  call_to_action: string;
-  created_at: string;
-  updated_at: string;
-}
+import type { SummaryResponse } from "../../api/api.types";
+import { getAuthState } from "../../util/auth.util";
 
 interface SummaryProps {
-  data: SummaryData;
+  data: SummaryResponse;
 }
 
 // Helper function to detect if content contains markdown
@@ -40,9 +22,7 @@ const isMarkdown = (text: string): boolean => {
   return markdownPatterns.some((pattern) => pattern.test(text));
 };
 
-// Enhanced markdown parser with reference link support
-// Update parseSimpleMarkdown to remove reference link handling
-// Updated parseSimpleMarkdown function to properly wrap text in paragraphs
+// markdown parser for basic summary formatting
 const parseSimpleMarkdown = (text: string) => {
   return (
     text
@@ -87,38 +67,29 @@ const ContentRenderer = ({ content, className = "" }: { content: string; classNa
 
 const Summary = ({ data }: SummaryProps) => {
   const [copied, setCopied] = useState(false);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const authState = getAuthState();
+  const isGuest = authState === 'guest';
+  const isAuthenticated = authState === 'authenticated';
 
   const handleCopy = async () => {
-    const content = `${data.headline}\n\n${data.summary}\n\nKey Points:\n${data.key_points.map((point) => `• ${point}`).join("\n")}\n\n${data.call_to_action}`;
-
     try {
-      await navigator.clipboard.writeText(content);
+      const textToCopy = `${data.headline}\n\n${data.summary}\n\nKey Points:\n${data.key_points.map(point => `• ${point}`).join('\n')}\n\n${data.call_to_action}`;
+      await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
       toast.success("Summary copied to clipboard!");
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
+    } catch (error) {
       toast.error("Failed to copy to clipboard");
     }
   };
 
   const handleDownload = () => {
-    const content = `${data.headline}\n\n${data.summary}\n\nKey Points:\n${data.key_points.map((point) => `• ${point}`).join("\n")}\n\n${data.call_to_action}\n\nGenerated on: ${formatDate(data.created_at)}`;
-
-    const blob = new Blob([content], { type: "text/plain" });
+    const content = `${data.headline}\n\n${data.summary}\n\nKey Points:\n${data.key_points.map(point => `• ${point}`).join('\n')}\n\n${data.call_to_action}\n\nReferences:\n${data.references.map(ref => `• ${ref.title} - ${ref.url}`).join('\n')}`;
+    const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
-    a.download = `${data.headline.replace(/[^a-z0-9]/gi, "_").toLowerCase()}.txt`;
+    a.download = `${data.headline.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -126,15 +97,62 @@ const Summary = ({ data }: SummaryProps) => {
     toast.success("Summary downloaded!");
   };
 
+  const handleShare = async () => {
+    if (data.summary_id && navigator.share) {
+      try {
+        await navigator.share({
+          title: data.headline,
+          text: data.summary,
+          url: `${window.location.origin}/history/${data.summary_id}`
+        });
+      } catch (error) {
+        // Fallback to copy URL
+        handleCopy();
+      }
+    } else {
+      handleCopy();
+    }
+  };
+
   return (
     <RootLayout className="bg-mainBg">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header with Back Button */}
         <div className="mb-8 animate-slide-up">
-          <Link to="/history" className="inline-flex items-center gap-2 text-customprimary hover:text-primaryDark font-medium mb-6 transition-all hover:translate-x-1">
+          <Link to="/prompt" className="inline-flex items-center gap-2 text-customprimary hover:text-primaryDark font-medium mb-6 transition-all hover:translate-x-1">
             <ArrowLeft className="w-4 h-4" />
-            Back to History
+            Back to Search
           </Link>
+
+          {/* Guest User Upgrade Prompt */}
+          {isGuest && data.guest_info && (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 mb-6 animate-fade-in-up">
+              <div className="flex items-start gap-3">
+                <UserPlus className="w-5 h-5 text-blue-600 mt-0.5" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-blue-900 mb-1">Enjoying TrendBits?</h3>
+                  <p className="text-sm text-blue-700 mb-3">
+                    You have {data.guest_info.requests_remaining} free {data.guest_info.requests_remaining === 1 ? 'prompt' : 'prompts'} remaining. 
+                    Sign up for unlimited access and save your summaries to history!
+                  </p>
+                  <div className="flex gap-2">
+                    <Link 
+                      to="/auth/register" 
+                      className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      Sign Up Free
+                    </Link>
+                    <Link 
+                      to="/auth/login" 
+                      className="px-3 py-1.5 border border-blue-300 text-blue-700 text-sm rounded-md hover:bg-blue-50 transition-colors"
+                    >
+                      Login
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-3 sm:p-6 animate-fade-in-up">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-4">
@@ -146,19 +164,18 @@ const Summary = ({ data }: SummaryProps) => {
                 <div className="flex items-center gap-4 text-xs sm:text-sm text-gray-500">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4" />
-                    <span>Created: {formatDate(data.created_at)}</span>
+                    <span>Generated: {new Date().toLocaleDateString()}</span>
                   </div>
-                  {data.updated_at !== data.created_at && (
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      <span>Updated: {formatDate(data.updated_at)}</span>
+                  {!data.saved_to_history && isGuest && (
+                    <div className="flex items-center gap-2 text-amber-600">
+                      <AlertCircle className="w-4 h-4" />
+                      <span>Not saved - Sign up to save</span>
                     </div>
                   )}
                 </div>
               </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2 sm:flex-shrink-0">
+              
+              <div className="flex items-center gap-2">
                 <button
                   onClick={handleCopy}
                   className="flex items-center gap-2 px-3 py-2 text-sm bg-lightGray/80 hover:bg-customprimary/20 text-gray-700 hover:text-customprimary rounded-lg transition-all hover:scale-105"
@@ -173,13 +190,22 @@ const Summary = ({ data }: SummaryProps) => {
                   <Download className="w-4 h-4" />
                   Download
                 </button>
+                {data.summary_id && (
+                  <button
+                    onClick={handleShare}
+                    className="flex items-center gap-2 px-3 py-2 text-sm bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-all hover:scale-105"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Share
+                  </button>
+                )}
               </div>
             </div>
 
             {/* Search Term */}
             <div className="bg-lightGray/60 rounded-lg p-3 mb-4">
               <h3 className="text-xs font-semibold text-gray-600 mb-1">Original Search Term:</h3>
-              <p className="text-xs sm:text-sm text-gray-800 font-medium">{data.search_term}</p>
+              <p className="text-xs sm:text-sm text-gray-800 font-medium">{data.searchTerm}</p>
             </div>
           </div>
         </div>
@@ -217,33 +243,19 @@ const Summary = ({ data }: SummaryProps) => {
             </div>
           )}
 
-          {/* Call to Action Section */}
-          {data.call_to_action && (
-            <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-3 sm:p-6 animate-slide-in-left">
+          {/* References Section */}
+          {data.references && data.references.length > 0 && (
+            <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-3 sm:p-6 animate-fade-in-up">
               <div className="flex items-center gap-3 mb-4">
                 <Target className="w-5 h-5 text-customprimary" />
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 font-fredoka">Call to Action</h2>
-              </div>
-              <div className="bg-customprimary/20 backdrop-blur-sm rounded-lg p-4 border border-customprimary/30">
-                <ContentRenderer content={data.call_to_action} className="text-customprimary font-medium leading-relaxed" />
-              </div>
-            </div>
-          )}
-
-          {/* Article References Section */}
-          {data.article_references && data.article_references.length > 0 && (
-            <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-3 sm:p-6 animate-slide-in-right">
-              <div className="flex items-center gap-3 mb-4">
-                <FileText className="w-5 h-5 text-customprimary" />
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 font-fredoka">Article References</h2>
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 font-fredoka">References</h2>
               </div>
               <div className="bg-lightGray/80 rounded-lg p-4">
-                <div className="space-y-3">
-                  {data.article_references.map((reference, index) => (
-                    <div key={index} className="flex items-start gap-3 animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
-                      <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded flex-shrink-0 mt-1">[{index + 1}]</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-col gap-1">
+                <div className="grid gap-4">
+                  {data.references.map((reference, index) => (
+                    <div key={index} className="border-l-4 border-customprimary pl-4 animate-slide-in-left" style={{ animationDelay: `${index * 0.1}s` }}>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-start gap-2">
                           <a
                             href={reference.url.replace(/`/g, "")}
                             target="_blank"
@@ -252,16 +264,29 @@ const Summary = ({ data }: SummaryProps) => {
                           >
                             {reference.title}
                           </a>
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
-                            <span className="font-medium">{reference.source}</span>
-                            <span>•</span>
-                            <span>{new Date(reference.date).toLocaleDateString()}</span>
-                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <span className="font-medium">{reference.source}</span>
+                          <span>•</span>
+                          <span>{new Date(reference.date).toLocaleDateString()}</span>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Call to Action Section */}
+          {data.call_to_action && (
+            <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 p-3 sm:p-6 animate-fade-in-up-delay">
+              <div className="flex items-center gap-3 mb-4">
+                <Target className="w-5 h-5 text-customprimary" />
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 font-fredoka">Next Steps</h2>
+              </div>
+              <div className="bg-lightGray/80 rounded-lg p-4">
+                <ContentRenderer content={data.call_to_action} className="text-gray-700 leading-relaxed" />
               </div>
             </div>
           )}
@@ -272,19 +297,32 @@ const Summary = ({ data }: SummaryProps) => {
             <div className="flex flex-wrap gap-3">
               <Link
                 to="/prompt"
-                search={{ prompt: data.search_term }}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-customprimary text-white rounded-lg hover:bg-primaryDark transition-all font-medium hover:scale-105 focus:scale-[1.01]"
+                search={{ prompt: data.searchTerm }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-customprimary text-white rounded-lg hover:bg-primaryDark transition-colors font-medium"
               >
                 <FileText className="w-4 h-4" />
-                Use Search Term Again
+                Search Similar Topics
               </Link>
-              <Link
-                to="/history"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-lightGray/80 hover:bg-customprimary/20 text-gray-700 hover:text-customprimary rounded-lg transition-all font-medium hover:scale-105 focus:scale-[1.01]"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back to History
-              </Link>
+              
+              {isAuthenticated && (
+                <Link
+                  to="/history"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                >
+                  <Clock className="w-4 h-4" />
+                  View History
+                </Link>
+              )}
+              
+              {isGuest && (
+                <Link
+                  to="/auth/register"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  Sign Up to Save
+                </Link>
+              )}
             </div>
           </div>
         </div>
