@@ -21,24 +21,28 @@ interface HistoryItem {
 // Update the parseInlineMarkdown function to handle headings as bold text
 const parseInlineMarkdown = (text: string) => {
   return text
-    .replace(/^### (.*$)/gm, '<strong>$1</strong>') // Convert h3 to bold
-    .replace(/^## (.*$)/gm, '<strong>$1</strong>')  // Convert h2 to bold
-    .replace(/^# (.*$)/gm, '<strong>$1</strong>')   // Convert h1 to bold
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold with **
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')             // Italic with *
+    .replace(/^### (.*$)/gm, "<strong>$1</strong>") // Convert h3 to bold
+    .replace(/^## (.*$)/gm, "<strong>$1</strong>") // Convert h2 to bold
+    .replace(/^# (.*$)/gm, "<strong>$1</strong>") // Convert h1 to bold
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Bold with **
+    .replace(/\*(.*?)\*/g, "<em>$1</em>") // Italic with *
     .replace(/`(.*?)`/g, '<code class="bg-gray-100 px-1 rounded text-xs">$1</code>'); // Code
 };
 
 const History = () => {
   const navigate = useNavigate();
-  const search = useSearch({ from: '/_protected/_auth/history/' });
+  const search = useSearch({ from: "/_protected/_auth/history/" });
   const [searchQuery, setSearchQuery] = useState(search.q || "");
-  
+
   const { page = 1, limit = 10, q } = search;
 
   // Fetch history data with React Query
-  const { data: historyData, isLoading, error } = useQuery({
-    queryKey: ['promptHistory', page, limit, q],
+  const {
+    data: historyData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["promptHistory", page, limit, q],
     queryFn: () => getPromptHistoryList({ page, limit, q }),
     staleTime: 5 * 60 * 1000, // 5 mins
     gcTime: 10 * 60 * 1000, // 10 mins
@@ -52,37 +56,31 @@ const History = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     navigate({
-      to: '/history',
-      search: { page: 1, limit, q: searchQuery.trim() || undefined }
+      to: "/history",
+      search: { page: 1, limit, q: searchQuery.trim() || undefined },
     });
   };
 
   const handlePageChange = (newPage: number) => {
     navigate({
-      to: '/',
-      search: { page: newPage, limit, q }
+      to: "/history",
+      search: { page: newPage, limit, q },
     });
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   if (error) {
     toast.error("Failed to load history. Please try again.");
   }
-
-  // Add this helper function at the top of the component
-  const getTruncatedSummary = (summary: string, isMobile: boolean = false) => {
-    const limit = isMobile ? 150 : 300;
-    return summary.length > limit ? `${summary.substring(0, limit)}...` : summary;
-  };
 
   return (
     <RootLayout className="bg-mainBg">
@@ -140,40 +138,39 @@ const History = () => {
           ) : historyItems.length > 0 ? (
             // History Items
             historyItems.map((item) => (
-              <Link
-                key={item.id}
-                to="/history/$summary_id"
-                params={{ summary_id: item.id }}
-                className="block"
-              >
+              <Link key={item.id} to="/history/$summary_id" params={{ summary_id: item.id }} className="block">
                 <div className="bg-secondaryBg/90 backdrop-blur-sm rounded-xl border border-customprimary/20 hover:border-customprimary hover:shadow-lg hover:bg-secondaryBg transition-all p-4 sm:p-6 group cursor-pointer">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-2">
                         <FileText className="w-5 h-5 text-customprimary" />
-                        <h3 className="font-semibold text-gray-800 group-hover:text-primaryDark transition-colors">
-                          {item.headline}
-                        </h3>
+                        <h3 className="font-semibold text-gray-800 group-hover:text-primaryDark transition-colors">{item.headline}</h3>
                       </div>
-                        <p className="text-sm text-gray-500 flex items-center gap-2 mb-2">
+                      <p className="text-sm text-gray-500 flex items-center gap-2 mb-2">
                         <Clock className="w-4 h-4" />
                         {formatDate(item.created_at)}
                       </p>
-                      <p className="text-xs text-gray-400 mb-3">
-                        Search: {item.search_term.length > 80 ? `${item.search_term.substring(0, 80)}...` : item.search_term}
-                      </p>
+                      <p className="text-xs text-gray-400 mb-3">Search: {item.search_term.length > 80 ? `${item.search_term.substring(0, 80)}...` : item.search_term}</p>
                     </div>
                   </div>
-                  
+
                   <div className="bg-lightGray/80 backdrop-blur-sm rounded-lg p-4 mb-4 border border-customprimary/15">
-                    <div className="text-xs sm:text-sm text-gray-700 leading-relaxed mb-3 break-words overflow-hidden"
-                      dangerouslySetInnerHTML={{ 
-                        __html: parseInlineMarkdown(
-                          getTruncatedSummary(item.summary, true)
-                        ) 
-                      }}
-                    />
-                    
+                    {/* Mobile: Show shorter summary, Desktop: Show longer summary */}
+                    <div className="text-xs sm:text-sm text-gray-700 leading-relaxed mb-3 break-words overflow-hidden">
+                      <div
+                        className="sm:hidden"
+                        dangerouslySetInnerHTML={{
+                          __html: parseInlineMarkdown(item.summary.length > 150 ? `${item.summary.substring(0, 150)}...` : item.summary),
+                        }}
+                      />
+                      <div
+                        className="hidden sm:block"
+                        dangerouslySetInnerHTML={{
+                          __html: parseInlineMarkdown(item.summary.length > 300 ? `${item.summary.substring(0, 300)}...` : item.summary),
+                        }}
+                      />
+                    </div>
+
                     {item.key_points && item.key_points.length > 0 && (
                       <div className="mb-3">
                         <h4 className="text-xs font-semibold text-gray-600 mb-2">Key Points:</h4>
@@ -184,29 +181,23 @@ const History = () => {
                               <span>{point.length > 100 ? `${point.substring(0, 85)}...` : point}</span>
                             </li>
                           ))}
-                          {item.key_points.length > 3 && (
-                            <li className="text-customprimary font-medium">+{item.key_points.length - 3} more points</li>
-                          )}
+                          {item.key_points.length > 3 && <li className="text-customprimary font-medium">+{item.key_points.length - 3} more points</li>}
                         </ul>
                       </div>
                     )}
-                    
+
                     {item.call_to_action && (
                       <div className="bg-customprimary/20 backdrop-blur-sm rounded p-2 mt-3 border border-customprimary/30">
                         <p className="text-xs text-customprimary font-medium">{item.call_to_action}</p>
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
-                      <div className="text-xs text-gray-400">
-                        ID: {item.id.split('-')[0]}...
-                      </div>
+                      <div className="text-xs text-gray-400">ID: {item.id.split("-")[0]}...</div>
                       <div className="flex items-center justify-between sm:justify-start gap-2 sm:gap-3">
-                        <span className="text-customprimary hover:text-primaryDark font-medium text-sm transition-colors">
-                          View Details →
-                        </span>
+                        <span className="text-customprimary hover:text-primaryDark font-medium text-sm transition-colors">View Details →</span>
                         <Link
                           to="/prompt"
                           search={{ prompt: item.search_term }}
@@ -225,23 +216,15 @@ const History = () => {
             // Empty State
             <div className="text-center py-12">
               <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                {q ? 'No prompts found' : 'No prompts yet'}
-              </h3>
-              <p className="text-gray-500 mb-6">
-                {
-                  q 
-                    ? `No prompts match your search for "${q}".` 
-                    : 'Start creating prompts to see your history here.'
-                }
-              </p>
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">{q ? "No prompts found" : "No prompts yet"}</h3>
+              <p className="text-gray-500 mb-6">{q ? `No prompts match your search for "${q}".` : "Start creating prompts to see your history here."}</p>
               {q ? (
                 <button
                   onClick={() => {
                     setSearchQuery("");
-                    navigate({ 
-                      to: '/history',
-                      search: { page: 1, limit } 
+                    navigate({
+                      to: "/history",
+                      search: { page: 1, limit },
                     });
                   }}
                   className="px-4 py-2 text-customprimary hover:text-primaryDark font-medium transition-colors"
@@ -249,10 +232,7 @@ const History = () => {
                   Clear search
                 </button>
               ) : (
-                <Link
-                  to="/prompt"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-customprimary text-white rounded-lg hover:bg-primaryDark transition-colors font-medium"
-                >
+                <Link to="/prompt" className="inline-flex items-center gap-2 px-6 py-3 bg-customprimary text-white rounded-lg hover:bg-primaryDark transition-colors font-medium">
                   <FileText className="w-4 h-4" />
                   Create Your First Prompt
                 </Link>
@@ -267,7 +247,9 @@ const History = () => {
             <div className="flex items-center justify-between mb-4">
               <p className="text-gray-600 text-sm">
                 {q ? (
-                  <>Showing results for "<span className="font-medium text-gray-800">{q}</span>" • </>
+                  <>
+                    Showing results for "<span className="font-medium text-gray-800">{q}</span>" •{" "}
+                  </>
                 ) : null}
                 <span className="font-medium">{totalItems}</span> total prompts
               </p>
@@ -277,7 +259,7 @@ const History = () => {
                 </div>
               )}
             </div>
-            
+
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-1 sm:gap-2 px-4 overflow-x-auto">
                 <button
@@ -288,21 +270,19 @@ const History = () => {
                   <ChevronLeft className="w-4 h-4" />
                   <span className="hidden sm:inline">Previous</span>
                 </button>
-                
+
                 <div className="flex items-center gap-1">
                   {[...Array(Math.min(window.innerWidth < 640 ? 3 : 5, totalPages))].map((_, i) => {
                     const maxVisible = window.innerWidth < 640 ? 3 : 5;
                     const pageNum = Math.max(1, Math.min(totalPages - (maxVisible - 1), page - Math.floor(maxVisible / 2))) + i;
                     if (pageNum > totalPages) return null;
-                    
+
                     return (
                       <button
                         key={pageNum}
                         onClick={() => handlePageChange(pageNum)}
                         className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg font-medium transition-colors text-sm sm:text-base flex-shrink-0 ${
-                          pageNum === page
-                            ? 'bg-customprimary text-white'
-                            : 'text-gray-600 hover:bg-secondaryBg hover:text-primaryDark'
+                          pageNum === page ? "bg-customprimary text-white" : "text-gray-600 hover:bg-secondaryBg hover:text-primaryDark"
                         }`}
                       >
                         {pageNum}
@@ -310,7 +290,7 @@ const History = () => {
                     );
                   })}
                 </div>
-                
+
                 <button
                   onClick={() => handlePageChange(page + 1)}
                   disabled={page >= totalPages}
