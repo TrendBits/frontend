@@ -1,4 +1,4 @@
-import { ArrowLeft, Clock, FileText, Lightbulb, Target, Copy, Download, Share2, UserPlus, AlertCircle } from "lucide-react";
+import { ArrowLeft, Clock, FileText, Lightbulb, Target, Copy, Download, UserPlus, AlertCircle } from "lucide-react";
 import { RootLayout } from "../../components/Layouts";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -97,22 +97,6 @@ const Summary = ({ data }: SummaryProps) => {
     toast.success("Summary downloaded!");
   };
 
-  const handleShare = async () => {
-    if (data.summary_id && navigator.share) {
-      try {
-        await navigator.share({
-          title: data.headline,
-          text: data.summary,
-          url: `${window.location.origin}/history/${data.summary_id}`
-        });
-      } catch (error) {
-        // Fallback to copy URL
-        handleCopy();
-      }
-    } else {
-      handleCopy();
-    }
-  };
 
   return (
     <RootLayout className="bg-mainBg">
@@ -190,15 +174,6 @@ const Summary = ({ data }: SummaryProps) => {
                   <Download className="w-4 h-4" />
                   Download
                 </button>
-                {data.summary_id && (
-                  <button
-                    onClick={handleShare}
-                    className="flex items-center gap-2 px-3 py-2 text-sm bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-all hover:scale-105"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    Share
-                  </button>
-                )}
               </div>
             </div>
 
